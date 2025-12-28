@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: trustflow-crm:latest
+    container_name: trustflow-crm-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - trustflow-network
+    depends_on:
+      - db
+      - redis
+
+  nginx:
+    image: nginx:alpine
+    container_name: trustflow-crm-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - trustflow-network
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.0
+    container_name: trustflow-crm-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: trustflow_crm
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_USER: trustflow
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      - trustflow-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: trustflow-crm-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - trustflow-network
+
+  horizon:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: trustflow-crm:latest
+    container_name: trustflow-crm-horizon
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: php artisan horizon
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - trustflow-network
+    depends_on:
+      - app
+      - db
+      - redis
+
+networks:
+  trustflow-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
+  redisdata:
+    driver: local
+
