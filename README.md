@@ -127,43 +127,23 @@ php artisan horizon
 
 ### Environment Variables
 
-Edit `.env` file with your configuration:
+Copy `.env.example` to `.env` and configure the following variables:
 
-```env
-# Application
-APP_NAME="TrustFlow CRM"
-APP_ENV=local
-APP_KEY=
-APP_DEBUG=true
-APP_URL=http://localhost:8080
-APP_LOCALE=ja
-APP_FALLBACK_LOCALE=en
+**Required Variables:**
+- `APP_KEY` - Application encryption key (generated automatically)
+- `DB_HOST` - Database host (`db` for Docker, `localhost` for local)
+- `DB_DATABASE` - Database name
+- `DB_USERNAME` - Database username
+- `DB_PASSWORD` - Database password
+- `REDIS_HOST` - Redis host (`redis` for Docker, `127.0.0.1` for local)
 
-# Database
-DB_CONNECTION=mysql
-DB_HOST=db  # Use 'localhost' for local setup
-DB_PORT=3306
-DB_DATABASE=trustflow_crm
-DB_USERNAME=trustflow
-DB_PASSWORD=root
+**Optional Variables:**
+- `OPENAI_API_KEY` - OpenAI API key for AI features
+- `AWS_ACCESS_KEY_ID` - AWS S3 access key (if using S3)
+- `AWS_SECRET_ACCESS_KEY` - AWS S3 secret key (if using S3)
+- `AWS_BUCKET` - AWS S3 bucket name (if using S3)
 
-# Redis
-REDIS_HOST=redis  # Use '127.0.0.1' for local setup
-REDIS_PASSWORD=null
-REDIS_PORT=6379
-
-# Queue
-QUEUE_CONNECTION=redis
-
-# OpenAI (for AI features)
-OPENAI_API_KEY=your_openai_api_key_here
-
-# AWS S3 (optional, for file storage)
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_DEFAULT_REGION=us-east-1
-AWS_BUCKET=
-```
+> ⚠️ **Security Note**: Never commit your `.env` file to version control. Always use `.env.example` as a template and keep your actual credentials secure.
 
 ### Docker Services
 
@@ -200,10 +180,9 @@ All Filament Resources and Pages are fully translated.
 
 ## 👥 Default Users
 
-After seeding, you can log in with:
+After seeding, default users are created. Check `database/seeders/UserSeeder.php` for credentials.
 
-- **Super Admin**: `admin@trustflow.com` / `password`
-- **Demo Admin**: `admin@demo.com` / `password`
+> ⚠️ **Security Note**: Change default passwords immediately after first login in production environments.
 
 ## 📚 Usage
 
@@ -250,8 +229,8 @@ docker-compose logs -f app
 docker-compose exec app php artisan migrate
 docker-compose exec app composer install
 
-# Access MySQL
-docker-compose exec db mysql -u trustflow -proot trustflow_crm
+# Access MySQL (replace with your credentials)
+docker-compose exec db mysql -u YOUR_DB_USERNAME -pYOUR_DB_PASSWORD YOUR_DB_NAME
 
 # Access Redis CLI
 docker-compose exec redis redis-cli
@@ -309,6 +288,15 @@ The application is automatically built and pushed to Docker Hub:
 - Tenant data isolation
 - Password hashing (bcrypt)
 - API token authentication (Sanctum)
+
+### Security Best Practices
+
+- ⚠️ **Never commit `.env` file** - Contains sensitive credentials
+- ⚠️ **Change default passwords** - Update default user passwords after installation
+- ⚠️ **Use strong passwords** - For database, Redis, and admin accounts
+- ⚠️ **Keep API keys secure** - Store OpenAI and AWS keys securely
+- ⚠️ **Set `APP_DEBUG=false`** - In production environments
+- ⚠️ **Use HTTPS** - Always use SSL/TLS in production
 
 ## 📊 Monitoring
 
