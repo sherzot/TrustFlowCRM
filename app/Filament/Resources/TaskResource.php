@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\DateHelper;
 
 class TaskResource extends Resource
 {
@@ -98,7 +99,9 @@ class TaskResource extends Resource
                     ])
                     ->default('medium'),
                 Forms\Components\DatePicker::make('due_date')
-                    ->label(__('filament.due_date')),
+                    ->label(__('filament.due_date'))
+                    ->displayFormat(DateHelper::getDatePickerDisplayFormat())
+                    ->format(DateHelper::getDatePickerFormat()),
                 Forms\Components\TextInput::make('estimated_hours')
                     ->label(__('filament.estimated_hours'))
                     ->numeric(),

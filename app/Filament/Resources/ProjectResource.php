@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\DateHelper;
 
 class ProjectResource extends Resource
 {
@@ -90,9 +91,13 @@ class ProjectResource extends Resource
                     ])
                     ->default('planning'),
                 Forms\Components\DatePicker::make('start_date')
-                    ->label(__('filament.start_date')),
+                    ->label(__('filament.start_date'))
+                    ->displayFormat(DateHelper::getDatePickerDisplayFormat())
+                    ->format(DateHelper::getDatePickerFormat()),
                 Forms\Components\DatePicker::make('end_date')
-                    ->label(__('filament.end_date')),
+                    ->label(__('filament.end_date'))
+                    ->displayFormat(DateHelper::getDatePickerDisplayFormat())
+                    ->format(DateHelper::getDatePickerFormat()),
                 Forms\Components\TextInput::make('budget')
                     ->label(__('filament.budget'))
                     ->numeric()

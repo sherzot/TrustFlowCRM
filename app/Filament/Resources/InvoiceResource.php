@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\DateHelper;
 
 class InvoiceResource extends Resource
 {
@@ -79,10 +80,14 @@ class InvoiceResource extends Resource
                 Forms\Components\DatePicker::make('issue_date')
                     ->label(__('filament.issue_date'))
                     ->required()
-                    ->default(now()),
+                    ->default(now())
+                    ->displayFormat(DateHelper::getDatePickerDisplayFormat())
+                    ->format(DateHelper::getDatePickerFormat()),
                 Forms\Components\DatePicker::make('due_date')
                     ->label(__('filament.due_date'))
-                    ->required(),
+                    ->required()
+                    ->displayFormat(DateHelper::getDatePickerDisplayFormat())
+                    ->format(DateHelper::getDatePickerFormat()),
                 Forms\Components\Select::make('status')
                     ->label(__('filament.status'))
                     ->options([

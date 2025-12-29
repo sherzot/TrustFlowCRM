@@ -12,6 +12,7 @@ use Filament\Tables\Table;
 use App\Domains\Sales\SalesService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\DateHelper;
 
 class DealResource extends Resource
 {
@@ -112,7 +113,9 @@ class DealResource extends Resource
                     ->maxValue(100)
                     ->suffix('%'),
                 Forms\Components\DatePicker::make('expected_close_date')
-                    ->label(__('filament.expected_close_date')),
+                    ->label(__('filament.expected_close_date'))
+                    ->displayFormat(DateHelper::getDatePickerDisplayFormat())
+                    ->format(DateHelper::getDatePickerFormat()),
                 Forms\Components\Select::make('status')
                     ->label(__('filament.status'))
                     ->options([
