@@ -26,31 +26,39 @@ class OKRDashboard extends Page
         $currentYear = now()->year;
 
         // Sales Objectives
-        $dealsWon = Deal::where('tenant_id', $tenantId)
-            ->where('status', 'won')
+        $dealsWonQuery = Deal::where('status', 'won')
             ->whereMonth('won_at', $currentMonth)
-            ->whereYear('won_at', $currentYear)
-            ->count();
+            ->whereYear('won_at', $currentYear);
+        if ($tenantId !== null) {
+            $dealsWonQuery->where('tenant_id', $tenantId);
+        }
+        $dealsWon = $dealsWonQuery->count();
 
-        $dealsValue = Deal::where('tenant_id', $tenantId)
-            ->where('status', 'won')
+        $dealsValueQuery = Deal::where('status', 'won')
             ->whereMonth('won_at', $currentMonth)
-            ->whereYear('won_at', $currentYear)
-            ->sum('value');
+            ->whereYear('won_at', $currentYear);
+        if ($tenantId !== null) {
+            $dealsValueQuery->where('tenant_id', $tenantId);
+        }
+        $dealsValue = $dealsValueQuery->sum('value');
 
         // Revenue Objectives
-        $revenue = Invoice::where('tenant_id', $tenantId)
-            ->where('status', 'paid')
+        $revenueQuery = Invoice::where('status', 'paid')
             ->whereMonth('paid_at', $currentMonth)
-            ->whereYear('paid_at', $currentYear)
-            ->sum('total');
+            ->whereYear('paid_at', $currentYear);
+        if ($tenantId !== null) {
+            $revenueQuery->where('tenant_id', $tenantId);
+        }
+        $revenue = $revenueQuery->sum('total');
 
         // Project Completion
-        $projectsCompleted = Project::where('tenant_id', $tenantId)
-            ->where('status', 'completed')
+        $projectsQuery = Project::where('status', 'completed')
             ->whereMonth('updated_at', $currentMonth)
-            ->whereYear('updated_at', $currentYear)
-            ->count();
+            ->whereYear('updated_at', $currentYear);
+        if ($tenantId !== null) {
+            $projectsQuery->where('tenant_id', $tenantId);
+        }
+        $projectsCompleted = $projectsQuery->count();
 
         return [
             'deals_won' => [

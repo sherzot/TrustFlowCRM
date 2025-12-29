@@ -33,12 +33,14 @@ class KanbanBoard extends Page
 
         $dealsByStage = [];
         foreach ($stages as $key => $label) {
+            $dealsQuery = Deal::where('stage', $key)
+                ->where('status', 'open');
+            if ($tenantId !== null) {
+                $dealsQuery->where('tenant_id', $tenantId);
+            }
             $dealsByStage[$key] = [
                 'label' => $label,
-                'deals' => Deal::where('tenant_id', $tenantId)
-                    ->where('stage', $key)
-                    ->where('status', 'open')
-                    ->with(['account', 'contact'])
+                'deals' => $dealsQuery->with(['account', 'contact'])
                     ->orderBy('created_at', 'desc')
                     ->get()
                     ->toArray(),

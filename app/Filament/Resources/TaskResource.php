@@ -18,44 +18,75 @@ class TaskResource extends Resource
 
     protected static ?string $navigationGroup = 'Delivery';
 
+    public static function getModelLabel(): string
+    {
+        return __('filament.tasks');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.tasks');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.tasks');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.delivery');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Select::make('project_id')
+                    ->label(__('filament.project'))
                     ->relationship('project', 'name')
                     ->required()
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->placeholder(__('filament.select_option')),
                 Forms\Components\Select::make('assigned_to')
+                    ->label(__('filament.assigned_to'))
                     ->relationship('assignee', 'name')
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->placeholder(__('filament.select_option')),
                 Forms\Components\TextInput::make('title')
+                    ->label(__('filament.title'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('description')
+                    ->label(__('filament.description'))
                     ->rows(3),
                 Forms\Components\Select::make('status')
+                    ->label(__('filament.status'))
                     ->options([
-                        'todo' => 'To Do',
-                        'in_progress' => 'In Progress',
-                        'review' => 'Review',
-                        'done' => 'Done',
+                        'todo' => __('filament.todo'),
+                        'in_progress' => __('filament.in_progress'),
+                        'review' => __('filament.review'),
+                        'done' => __('filament.done'),
                     ])
                     ->default('todo'),
                 Forms\Components\Select::make('priority')
+                    ->label(__('filament.priority'))
                     ->options([
-                        'low' => 'Low',
-                        'medium' => 'Medium',
-                        'high' => 'High',
-                        'urgent' => 'Urgent',
+                        'low' => __('filament.low'),
+                        'medium' => __('filament.medium'),
+                        'high' => __('filament.high'),
+                        'urgent' => __('filament.urgent'),
                     ])
                     ->default('medium'),
-                Forms\Components\DatePicker::make('due_date'),
+                Forms\Components\DatePicker::make('due_date')
+                    ->label(__('filament.due_date')),
                 Forms\Components\TextInput::make('estimated_hours')
+                    ->label(__('filament.estimated_hours'))
                     ->numeric(),
                 Forms\Components\TextInput::make('actual_hours')
+                    ->label(__('filament.actual_hours'))
                     ->numeric(),
             ]);
     }
@@ -65,13 +96,17 @@ class TaskResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('filament.title'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('project.name')
+                    ->label(__('filament.project'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('assignee.name')
+                    ->label(__('filament.assigned_to'))
                     ->searchable(),
                 Tables\Columns\BadgeColumn::make('status')
+                    ->label(__('filament.status'))
                     ->colors([
                         'secondary' => 'todo',
                         'warning' => 'in_progress',
@@ -79,6 +114,7 @@ class TaskResource extends Resource
                         'success' => 'done',
                     ]),
                 Tables\Columns\BadgeColumn::make('priority')
+                    ->label(__('filament.priority'))
                     ->colors([
                         'gray' => 'low',
                         'primary' => 'medium',
@@ -86,15 +122,33 @@ class TaskResource extends Resource
                         'danger' => 'urgent',
                     ]),
                 Tables\Columns\TextColumn::make('due_date')
+                    ->label(__('filament.due_date'))
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('estimated_hours'),
-                Tables\Columns\TextColumn::make('actual_hours'),
+                Tables\Columns\TextColumn::make('estimated_hours')
+                    ->label(__('filament.estimated_hours')),
+                Tables\Columns\TextColumn::make('actual_hours')
+                    ->label(__('filament.actual_hours')),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status'),
-                Tables\Filters\SelectFilter::make('priority'),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label(__('filament.status'))
+                    ->options([
+                        'todo' => __('filament.todo'),
+                        'in_progress' => __('filament.in_progress'),
+                        'review' => __('filament.review'),
+                        'done' => __('filament.done'),
+                    ]),
+                Tables\Filters\SelectFilter::make('priority')
+                    ->label(__('filament.priority'))
+                    ->options([
+                        'low' => __('filament.low'),
+                        'medium' => __('filament.medium'),
+                        'high' => __('filament.high'),
+                        'urgent' => __('filament.urgent'),
+                    ]),
                 Tables\Filters\SelectFilter::make('project_id')
+                    ->label(__('filament.project'))
                     ->relationship('project', 'name'),
             ])
             ->actions([

@@ -18,49 +18,82 @@ class AccountResource extends Resource
 
     protected static ?string $navigationGroup = 'Sales';
 
+    public static function getModelLabel(): string
+    {
+        return __('filament.accounts');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.accounts');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.accounts');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.sales');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('filament.name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('industry')
+                    ->label(__('filament.industry'))
                     ->maxLength(255),
                 Forms\Components\TextInput::make('website')
+                    ->label(__('filament.website'))
                     ->url()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
+                    ->label(__('filament.phone'))
                     ->tel()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->label(__('filament.email'))
                     ->email()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('address')
+                    ->label(__('filament.address'))
                     ->rows(3),
                 Forms\Components\TextInput::make('city')
+                    ->label(__('filament.city'))
                     ->maxLength(255),
                 Forms\Components\TextInput::make('state')
+                    ->label(__('filament.state'))
                     ->maxLength(255),
                 Forms\Components\TextInput::make('country')
+                    ->label(__('filament.country'))
                     ->maxLength(255),
                 Forms\Components\TextInput::make('postal_code')
+                    ->label(__('filament.postal_code'))
                     ->maxLength(255),
                 Forms\Components\TextInput::make('annual_revenue')
+                    ->label(__('filament.annual_revenue'))
                     ->numeric()
                     ->prefix('$'),
                 Forms\Components\TextInput::make('employee_count')
+                    ->label(__('filament.employee_count'))
                     ->numeric(),
                 Forms\Components\Select::make('status')
+                    ->label(__('filament.status'))
                     ->options([
-                        'active' => 'Active',
-                        'inactive' => 'Inactive',
+                        'active' => __('filament.active'),
+                        'inactive' => __('filament.inactive'),
                     ])
                     ->default('active'),
                 Forms\Components\TextInput::make('ai_score')
+                    ->label(__('filament.ai_score'))
                     ->numeric()
-                    ->disabled()
-                    ->label('AI Score'),
+                    ->disabled(),
             ]);
     }
 
@@ -69,33 +102,41 @@ class AccountResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('filament.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('industry')
+                    ->label(__('filament.industry'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label(__('filament.email'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('phone'),
+                Tables\Columns\TextColumn::make('phone')
+                    ->label(__('filament.phone')),
                 Tables\Columns\TextColumn::make('ai_score')
-                    ->label('AI Score')
+                    ->label(__('filament.ai_score'))
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('status')
+                    ->label(__('filament.status'))
                     ->colors([
                         'success' => 'active',
                         'danger' => 'inactive',
                     ]),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('common.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                    ->label(__('filament.status'))
                     ->options([
-                        'active' => 'Active',
-                        'inactive' => 'Inactive',
+                        'active' => __('filament.active'),
+                        'inactive' => __('filament.inactive'),
                     ]),
-                Tables\Filters\SelectFilter::make('industry'),
+                Tables\Filters\SelectFilter::make('industry')
+                    ->label(__('filament.industry')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

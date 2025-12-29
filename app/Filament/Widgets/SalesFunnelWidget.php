@@ -21,9 +21,11 @@ class SalesFunnelWidget extends ChartWidget
         
         $data = [];
         foreach ($stages as $stage) {
-            $data[] = Deal::where('tenant_id', $tenantId)
-                ->where('stage', $stage)
-                ->count();
+            $query = Deal::where('stage', $stage);
+            if ($tenantId !== null) {
+                $query->where('tenant_id', $tenantId);
+            }
+            $data[] = $query->count();
         }
 
         return [

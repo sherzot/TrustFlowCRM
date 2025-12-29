@@ -19,55 +19,86 @@ class LeadResource extends Resource
 
     protected static ?string $navigationGroup = 'Sales';
 
+    public static function getModelLabel(): string
+    {
+        return __('filament.leads');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.leads');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.leads');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.sales');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Select::make('source')
+                    ->label(__('filament.source'))
                     ->options([
-                        'website' => 'Website',
-                        'referral' => 'Referral',
-                        'social' => 'Social Media',
-                        'email' => 'Email Campaign',
-                        'other' => 'Other',
+                        'website' => __('filament.website'),
+                        'referral' => __('filament.referral'),
+                        'social' => __('filament.social_media'),
+                        'email' => __('filament.email_campaign'),
+                        'other' => __('filament.other'),
                     ])
                     ->required(),
                 Forms\Components\TextInput::make('first_name')
+                    ->label(__('filament.first_name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('last_name')
+                    ->label(__('filament.last_name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->label(__('filament.email'))
                     ->email()
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
+                    ->label(__('filament.phone'))
                     ->tel()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('company')
+                    ->label(__('filament.company'))
                     ->maxLength(255),
                 Forms\Components\TextInput::make('title')
+                    ->label(__('filament.title'))
                     ->maxLength(255),
                 Forms\Components\TextInput::make('website')
+                    ->label(__('filament.website'))
                     ->url()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('industry')
+                    ->label(__('filament.industry'))
                     ->maxLength(255),
                 Forms\Components\Textarea::make('description')
+                    ->label(__('filament.description'))
                     ->rows(3),
                 Forms\Components\Select::make('status')
+                    ->label(__('filament.status'))
                     ->options([
-                        'new' => 'New',
-                        'contacted' => 'Contacted',
-                        'qualified' => 'Qualified',
-                        'converted' => 'Converted',
+                        'new' => __('filament.new'),
+                        'contacted' => __('filament.contacted'),
+                        'qualified' => __('filament.qualified'),
+                        'converted' => __('filament.converted'),
                     ])
                     ->default('new'),
                 Forms\Components\TextInput::make('ai_score')
+                    ->label(__('filament.ai_score'))
                     ->numeric()
-                    ->disabled()
-                    ->label('AI Score'),
+                    ->disabled(),
             ]);
     }
 
@@ -76,19 +107,25 @@ class LeadResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('first_name')
+                    ->label(__('filament.first_name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('last_name')
+                    ->label(__('filament.last_name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label(__('filament.email'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('company')
+                    ->label(__('filament.company'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('source')
+                    ->label(__('filament.source'))
                     ->badge(),
                 Tables\Columns\TextColumn::make('ai_score')
-                    ->label('AI Score')
+                    ->label(__('filament.ai_score'))
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('status')
+                    ->label(__('filament.status'))
                     ->colors([
                         'primary' => 'new',
                         'warning' => 'contacted',
@@ -96,16 +133,25 @@ class LeadResource extends Resource
                         'info' => 'converted',
                     ]),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('common.created_at'))
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status'),
-                Tables\Filters\SelectFilter::make('source'),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label(__('filament.status'))
+                    ->options([
+                        'new' => __('filament.new'),
+                        'contacted' => __('filament.contacted'),
+                        'qualified' => __('filament.qualified'),
+                        'converted' => __('filament.converted'),
+                    ]),
+                Tables\Filters\SelectFilter::make('source')
+                    ->label(__('filament.source')),
             ])
             ->actions([
                 Tables\Actions\Action::make('convert')
-                    ->label('Convert')
+                    ->label(__('filament.convert'))
                     ->icon('heroicon-o-arrow-right')
                     ->requiresConfirmation()
                     ->action(function (Lead $record) {

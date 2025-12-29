@@ -19,29 +19,57 @@ class DealResource extends Resource
 
     protected static ?string $navigationGroup = 'Sales';
 
+    public static function getModelLabel(): string
+    {
+        return __('filament.deals');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.deals');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.deals');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.sales');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Select::make('account_id')
+                    ->label(__('filament.account'))
                     ->relationship('account', 'name')
                     ->required()
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->placeholder(__('filament.select_option')),
                 Forms\Components\Select::make('contact_id')
+                    ->label(__('filament.contact'))
                     ->relationship('contact', 'first_name')
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->placeholder(__('filament.select_option')),
                 Forms\Components\TextInput::make('name')
+                    ->label(__('filament.name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('description')
+                    ->label(__('filament.description'))
                     ->rows(3),
                 Forms\Components\TextInput::make('value')
+                    ->label(__('filament.value'))
                     ->numeric()
                     ->required()
                     ->prefix('$'),
                 Forms\Components\Select::make('currency')
+                    ->label(__('filament.currency'))
                     ->options([
                         'USD' => 'USD',
                         'EUR' => 'EUR',
@@ -49,33 +77,37 @@ class DealResource extends Resource
                     ])
                     ->default('USD'),
                 Forms\Components\Select::make('stage')
+                    ->label(__('filament.stage'))
                     ->options([
-                        'new' => 'New',
-                        'qualified' => 'Qualified',
-                        'discovery' => 'Discovery & Proposal',
-                        'proposal' => 'Proposal',
-                        'negotiation' => 'Negotiation',
-                        'won' => 'Won',
-                        'lost' => 'Lost',
+                        'new' => __('filament.new'),
+                        'qualified' => __('filament.qualified'),
+                        'discovery' => __('filament.discovery'),
+                        'proposal' => __('filament.proposal'),
+                        'negotiation' => __('filament.negotiation'),
+                        'won' => __('filament.won'),
+                        'lost' => __('filament.lost'),
                     ])
                     ->required(),
                 Forms\Components\TextInput::make('probability')
+                    ->label(__('filament.probability'))
                     ->numeric()
                     ->minValue(0)
                     ->maxValue(100)
                     ->suffix('%'),
-                Forms\Components\DatePicker::make('expected_close_date'),
+                Forms\Components\DatePicker::make('expected_close_date')
+                    ->label(__('filament.expected_close_date')),
                 Forms\Components\Select::make('status')
+                    ->label(__('filament.status'))
                     ->options([
-                        'open' => 'Open',
-                        'won' => 'Won',
-                        'lost' => 'Lost',
+                        'open' => __('filament.open'),
+                        'won' => __('filament.won'),
+                        'lost' => __('filament.lost'),
                     ])
                     ->default('open'),
                 Forms\Components\TextInput::make('ai_score')
+                    ->label(__('filament.ai_score'))
                     ->numeric()
-                    ->disabled()
-                    ->label('AI Score'),
+                    ->disabled(),
             ]);
     }
 
@@ -84,11 +116,14 @@ class DealResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('filament.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('account.name')
+                    ->label(__('filament.account'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('stage')
+                    ->label(__('filament.stage'))
                     ->badge()
                     ->colors([
                         'primary' => 'new',
@@ -98,25 +133,44 @@ class DealResource extends Resource
                         'danger' => 'lost',
                     ]),
                 Tables\Columns\TextColumn::make('value')
+                    ->label(__('filament.value'))
                     ->money('USD')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('probability')
+                    ->label(__('filament.probability'))
                     ->suffix('%')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('ai_score')
-                    ->label('AI Score')
+                    ->label(__('filament.ai_score'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('expected_close_date')
+                    ->label(__('filament.expected_close_date'))
                     ->date()
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('stage'),
-                Tables\Filters\SelectFilter::make('status'),
+                Tables\Filters\SelectFilter::make('stage')
+                    ->label(__('filament.stage'))
+                    ->options([
+                        'new' => __('filament.new'),
+                        'qualified' => __('filament.qualified'),
+                        'discovery' => __('filament.discovery'),
+                        'proposal' => __('filament.proposal'),
+                        'negotiation' => __('filament.negotiation'),
+                        'won' => __('filament.won'),
+                        'lost' => __('filament.lost'),
+                    ]),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label(__('filament.status'))
+                    ->options([
+                        'open' => __('filament.open'),
+                        'won' => __('filament.won'),
+                        'lost' => __('filament.lost'),
+                    ]),
             ])
             ->actions([
                 Tables\Actions\Action::make('win')
-                    ->label('Win')
+                    ->label(__('filament.win'))
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
@@ -125,13 +179,13 @@ class DealResource extends Resource
                         $salesService->winDeal($record);
                     }),
                 Tables\Actions\Action::make('lose')
-                    ->label('Lose')
+                    ->label(__('filament.lose'))
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->requiresConfirmation()
                     ->form([
                         Forms\Components\Textarea::make('reason')
-                            ->label('Lost Reason')
+                            ->label(__('filament.lost_reason'))
                             ->required(),
                     ])
                     ->action(function (Deal $record, array $data) {

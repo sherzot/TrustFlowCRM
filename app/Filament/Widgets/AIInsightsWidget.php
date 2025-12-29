@@ -16,6 +16,29 @@ class AIInsightsWidget extends BaseWidget
     protected function getStats(): array
     {
         $tenantId = Auth::user()->tenant_id;
+        
+        // Super Admin uchun bo'sh ma'lumot qaytarish
+        if ($tenantId === null) {
+            return [
+                Stat::make('High Score Leads', 0)
+                    ->description('AI score > 70')
+                    ->descriptionIcon('heroicon-m-arrow-trending-up')
+                    ->color('success'),
+                Stat::make('High Score Deals', 0)
+                    ->description('AI score > 70')
+                    ->descriptionIcon('heroicon-m-arrow-trending-up')
+                    ->color('success'),
+                Stat::make('Avg Deal Value', '$0.00')
+                    ->description('Won deals average')
+                    ->descriptionIcon('heroicon-m-currency-dollar')
+                    ->color('info'),
+                Stat::make('Conversion Rate', '0.0%')
+                    ->description('Lead to Account')
+                    ->descriptionIcon('heroicon-m-arrow-trending-up')
+                    ->color('warning'),
+            ];
+        }
+
         $analyticsService = app(AnalyticsService::class);
         $insights = $analyticsService->getAIInsights($tenantId);
 

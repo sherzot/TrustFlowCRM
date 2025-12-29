@@ -18,52 +18,85 @@ class InvoiceResource extends Resource
 
     protected static ?string $navigationGroup = 'Finance';
 
+    public static function getModelLabel(): string
+    {
+        return __('filament.invoices');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.invoices');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.invoices');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.finance');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Select::make('project_id')
+                    ->label(__('filament.project'))
                     ->relationship('project', 'name')
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->placeholder(__('filament.select_option')),
                 Forms\Components\Select::make('account_id')
+                    ->label(__('filament.account'))
                     ->relationship('account', 'name')
                     ->required()
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->placeholder(__('filament.select_option')),
                 Forms\Components\TextInput::make('invoice_number')
+                    ->label(__('filament.invoice_number'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\DatePicker::make('issue_date')
+                    ->label(__('filament.issue_date'))
                     ->required()
                     ->default(now()),
                 Forms\Components\DatePicker::make('due_date')
+                    ->label(__('filament.due_date'))
                     ->required(),
                 Forms\Components\Select::make('status')
+                    ->label(__('filament.status'))
                     ->options([
-                        'draft' => 'Draft',
-                        'sent' => 'Sent',
-                        'paid' => 'Paid',
-                        'overdue' => 'Overdue',
-                        'cancelled' => 'Cancelled',
+                        'draft' => __('filament.draft'),
+                        'sent' => __('filament.sent'),
+                        'paid' => __('filament.paid'),
+                        'overdue' => __('filament.overdue'),
+                        'cancelled' => __('filament.cancelled'),
                     ])
                     ->default('draft'),
                 Forms\Components\TextInput::make('subtotal')
+                    ->label(__('filament.subtotal'))
                     ->numeric()
                     ->required()
                     ->prefix('$'),
                 Forms\Components\TextInput::make('tax_rate')
+                    ->label(__('filament.tax_rate'))
                     ->numeric()
                     ->suffix('%')
                     ->default(0),
                 Forms\Components\TextInput::make('tax_amount')
+                    ->label(__('filament.tax_amount'))
                     ->numeric()
                     ->prefix('$'),
                 Forms\Components\TextInput::make('total')
+                    ->label(__('filament.total'))
                     ->numeric()
                     ->required()
                     ->prefix('$'),
                 Forms\Components\Select::make('currency')
+                    ->label(__('filament.currency'))
                     ->options([
                         'USD' => 'USD',
                         'EUR' => 'EUR',
@@ -71,6 +104,7 @@ class InvoiceResource extends Resource
                     ])
                     ->default('USD'),
                 Forms\Components\Textarea::make('notes')
+                    ->label(__('filament.notes'))
                     ->rows(3),
             ]);
     }
@@ -80,20 +114,26 @@ class InvoiceResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('invoice_number')
+                    ->label(__('filament.invoice_number'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('account.name')
+                    ->label(__('filament.account'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('issue_date')
+                    ->label(__('filament.issue_date'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('due_date')
+                    ->label(__('filament.due_date'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total')
+                    ->label(__('filament.total'))
                     ->money('USD')
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('status')
+                    ->label(__('filament.status'))
                     ->colors([
                         'secondary' => 'draft',
                         'info' => 'sent',
@@ -102,12 +142,21 @@ class InvoiceResource extends Resource
                         'gray' => 'cancelled',
                     ]),
                 Tables\Columns\TextColumn::make('paid_at')
+                    ->label(__('filament.paid_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status'),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label(__('filament.status'))
+                    ->options([
+                        'draft' => __('filament.draft'),
+                        'sent' => __('filament.sent'),
+                        'paid' => __('filament.paid'),
+                        'overdue' => __('filament.overdue'),
+                        'cancelled' => __('filament.cancelled'),
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

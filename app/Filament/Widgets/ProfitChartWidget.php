@@ -26,16 +26,20 @@ class ProfitChartWidget extends ChartWidget
             $date = now()->subMonths($i);
             $months[] = $date->format('M');
 
-            $monthRevenue = Invoice::where('tenant_id', $tenantId)
-                ->where('status', 'paid')
+            $revenueQuery = Invoice::where('status', 'paid')
                 ->whereYear('paid_at', $date->year)
-                ->whereMonth('paid_at', $date->month)
-                ->sum('total');
+                ->whereMonth('paid_at', $date->month);
+            if ($tenantId !== null) {
+                $revenueQuery->where('tenant_id', $tenantId);
+            }
+            $monthRevenue = $revenueQuery->sum('total');
 
-            $monthCosts = Project::where('tenant_id', $tenantId)
-                ->whereYear('created_at', $date->year)
-                ->whereMonth('created_at', $date->month)
-                ->sum('actual_cost');
+            $costsQuery = Project::whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month);
+            if ($tenantId !== null) {
+                $costsQuery->where('tenant_id', $tenantId);
+            }
+            $monthCosts = $costsQuery->sum('actual_cost');
 
             $revenue[] = $monthRevenue;
             $costs[] = $monthCosts;
