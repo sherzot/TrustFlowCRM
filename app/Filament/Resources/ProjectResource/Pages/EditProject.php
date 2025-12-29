@@ -6,6 +6,7 @@ use App\Filament\Resources\ProjectResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class EditProject extends EditRecord
 {
@@ -15,13 +16,13 @@ class EditProject extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn () => Auth::user()->can('delete projects')),
+                ->visible(fn () => PermissionHelper::can('delete projects')),
         ];
     }
 
     public function canDelete(): bool
     {
-        return Auth::user()->can('delete projects');
+        return PermissionHelper::can('delete projects');
     }
 }
 

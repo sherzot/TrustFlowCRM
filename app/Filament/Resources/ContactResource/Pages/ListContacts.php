@@ -6,6 +6,7 @@ use App\Filament\Resources\ContactResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class ListContacts extends ListRecords
 {
@@ -15,7 +16,7 @@ class ListContacts extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(fn () => Auth::user()->can('create contacts')),
+                ->visible(fn () => PermissionHelper::can('create contacts')),
         ];
     }
 }

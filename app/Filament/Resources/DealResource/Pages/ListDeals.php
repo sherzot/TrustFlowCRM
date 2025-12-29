@@ -6,6 +6,7 @@ use App\Filament\Resources\DealResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class ListDeals extends ListRecords
 {
@@ -15,7 +16,7 @@ class ListDeals extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(fn () => Auth::user()->can('create deals')),
+                ->visible(fn () => PermissionHelper::can('create deals')),
         ];
     }
 }

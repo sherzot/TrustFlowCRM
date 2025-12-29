@@ -6,6 +6,7 @@ use App\Filament\Resources\DealResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class EditDeal extends EditRecord
 {
@@ -15,13 +16,13 @@ class EditDeal extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn () => Auth::user()->can('delete deals')),
+                ->visible(fn () => PermissionHelper::can('delete deals')),
         ];
     }
 
     public function canDelete(): bool
     {
-        return Auth::user()->can('delete deals');
+        return PermissionHelper::can('delete deals');
     }
 }
 

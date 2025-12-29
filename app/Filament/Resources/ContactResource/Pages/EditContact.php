@@ -6,6 +6,7 @@ use App\Filament\Resources\ContactResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class EditContact extends EditRecord
 {
@@ -15,13 +16,13 @@ class EditContact extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn () => Auth::user()->can('delete contacts')),
+                ->visible(fn () => PermissionHelper::can('delete contacts')),
         ];
     }
 
     public function canDelete(): bool
     {
-        return Auth::user()->can('delete contacts');
+        return PermissionHelper::can('delete contacts');
     }
 }
 

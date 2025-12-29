@@ -6,6 +6,7 @@ use App\Filament\Resources\InvoiceResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class ListInvoices extends ListRecords
 {
@@ -15,7 +16,7 @@ class ListInvoices extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(fn () => Auth::user()->can('create invoices')),
+                ->visible(fn () => PermissionHelper::can('create invoices')),
         ];
     }
 }

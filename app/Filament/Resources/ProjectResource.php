@@ -12,6 +12,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\DateHelper;
+use App\Helpers\PermissionHelper;
 
 class ProjectResource extends Resource
 {
@@ -43,17 +44,17 @@ class ProjectResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('view projects');
+        return PermissionHelper::can('view projects');
     }
 
     public static function canViewAny(): bool
     {
-        return Auth::user()->can('view projects');
+        return PermissionHelper::can('view projects');
     }
 
     public static function canCreate(): bool
     {
-        return Auth::user()->can('create projects');
+        return PermissionHelper::can('create projects');
     }
 
     public static function form(Form $form): Form

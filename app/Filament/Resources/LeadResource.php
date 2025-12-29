@@ -12,6 +12,7 @@ use Filament\Tables\Table;
 use App\Domains\Sales\SalesService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 use App\Helpers\DateHelper;
 
 class LeadResource extends Resource
@@ -44,17 +45,17 @@ class LeadResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('view leads');
+        return PermissionHelper::can('view leads');
     }
 
     public static function canViewAny(): bool
     {
-        return Auth::user()->can('view leads');
+        return PermissionHelper::can('view leads');
     }
 
     public static function canCreate(): bool
     {
-        return Auth::user()->can('create leads');
+        return PermissionHelper::can('create leads');
     }
 
     public static function form(Form $form): Form

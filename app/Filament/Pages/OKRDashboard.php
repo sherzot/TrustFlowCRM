@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\Invoice;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class OKRDashboard extends Page
 {
@@ -30,8 +31,8 @@ class OKRDashboard extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        // Only Super Admin, Admin, and Manager can see OKR Dashboard
-        return Auth::user()->hasAnyRole(['super_admin', 'admin', 'manager']);
+        // Super Admin, Admin, and Manager can see OKR Dashboard
+        return PermissionHelper::hasAnyRole(['super_admin', 'admin', 'manager']);
     }
 
     public function getObjectives(): array

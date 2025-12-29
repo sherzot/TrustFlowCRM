@@ -6,6 +6,7 @@ use App\Filament\Resources\AccountResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class EditAccount extends EditRecord
 {
@@ -15,13 +16,13 @@ class EditAccount extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn () => Auth::user()->can('delete accounts')),
+                ->visible(fn () => PermissionHelper::can('delete accounts')),
         ];
     }
 
     public function canDelete(): bool
     {
-        return Auth::user()->can('delete accounts');
+        return PermissionHelper::can('delete accounts');
     }
 }
 

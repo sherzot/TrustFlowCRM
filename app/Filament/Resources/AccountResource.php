@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 use App\Helpers\DateHelper;
 
 class AccountResource extends Resource
@@ -43,17 +44,17 @@ class AccountResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('view accounts');
+        return PermissionHelper::can('view accounts');
     }
 
     public static function canViewAny(): bool
     {
-        return Auth::user()->can('view accounts');
+        return PermissionHelper::can('view accounts');
     }
 
     public static function canCreate(): bool
     {
-        return Auth::user()->can('create accounts');
+        return PermissionHelper::can('create accounts');
     }
 
     public static function form(Form $form): Form

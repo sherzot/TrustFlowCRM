@@ -6,6 +6,7 @@ use App\Filament\Resources\LeadResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class ListLeads extends ListRecords
 {
@@ -15,7 +16,7 @@ class ListLeads extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(fn () => Auth::user()->can('create leads')),
+                ->visible(fn () => PermissionHelper::can('create leads')),
         ];
     }
 }

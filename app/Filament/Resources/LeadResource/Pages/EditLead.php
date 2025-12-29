@@ -6,6 +6,7 @@ use App\Filament\Resources\LeadResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class EditLead extends EditRecord
 {
@@ -15,13 +16,13 @@ class EditLead extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn () => Auth::user()->can('delete leads')),
+                ->visible(fn () => PermissionHelper::can('delete leads')),
         ];
     }
 
     public function canDelete(): bool
     {
-        return Auth::user()->can('delete leads');
+        return PermissionHelper::can('delete leads');
     }
 }
 

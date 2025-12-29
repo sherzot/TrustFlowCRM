@@ -7,6 +7,7 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class ListAccounts extends ListRecords
 {
@@ -16,7 +17,7 @@ class ListAccounts extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(fn () => Auth::user()->can('create accounts')),
+                ->visible(fn () => PermissionHelper::can('create accounts')),
         ];
     }
 

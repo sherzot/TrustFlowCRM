@@ -6,6 +6,7 @@ use App\Filament\Resources\TaskResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class EditTask extends EditRecord
 {
@@ -15,13 +16,13 @@ class EditTask extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn () => Auth::user()->can('delete tasks')),
+                ->visible(fn () => PermissionHelper::can('delete tasks')),
         ];
     }
 
     public function canDelete(): bool
     {
-        return Auth::user()->can('delete tasks');
+        return PermissionHelper::can('delete tasks');
     }
 }
 

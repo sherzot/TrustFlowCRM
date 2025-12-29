@@ -13,6 +13,7 @@ use App\Domains\Sales\SalesService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\DateHelper;
+use App\Helpers\PermissionHelper;
 
 class DealResource extends Resource
 {
@@ -44,17 +45,17 @@ class DealResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('view deals');
+        return PermissionHelper::can('view deals');
     }
 
     public static function canViewAny(): bool
     {
-        return Auth::user()->can('view deals');
+        return PermissionHelper::can('view deals');
     }
 
     public static function canCreate(): bool
     {
-        return Auth::user()->can('create deals');
+        return PermissionHelper::can('create deals');
     }
 
     public static function form(Form $form): Form

@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class ContactResource extends Resource
 {
@@ -148,14 +149,14 @@ class ContactResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => Auth::user()->can('edit contacts')),
+                    ->visible(fn ($record) => PermissionHelper::can('edit contacts')),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => Auth::user()->can('delete contacts')),
+                    ->visible(fn ($record) => PermissionHelper::can('delete contacts')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => Auth::user()->can('delete contacts')),
+                        ->visible(fn () => PermissionHelper::can('delete contacts')),
                 ]),
             ]);
     }

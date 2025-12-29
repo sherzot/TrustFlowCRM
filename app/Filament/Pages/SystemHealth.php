@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class SystemHealth extends Page
 {
@@ -30,8 +31,8 @@ class SystemHealth extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        // Only Super Admin and Admin can see System Health
-        return Auth::user()->hasAnyRole(['super_admin', 'admin']);
+        // Super Admin and Admin can see System Health
+        return PermissionHelper::hasAnyRole(['super_admin', 'admin']);
     }
 
     public function getHealthMetrics(): array

@@ -12,6 +12,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\DateHelper;
+use App\Helpers\PermissionHelper;
 
 class InvoiceResource extends Resource
 {
@@ -43,17 +44,17 @@ class InvoiceResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('view invoices');
+        return PermissionHelper::can('view invoices');
     }
 
     public static function canViewAny(): bool
     {
-        return Auth::user()->can('view invoices');
+        return PermissionHelper::can('view invoices');
     }
 
     public static function canCreate(): bool
     {
-        return Auth::user()->can('create invoices');
+        return PermissionHelper::can('create invoices');
     }
 
     public static function form(Form $form): Form

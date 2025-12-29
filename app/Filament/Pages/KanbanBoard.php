@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Deal;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class KanbanBoard extends Page
 {
@@ -30,7 +31,7 @@ class KanbanBoard extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('view deals');
+        return PermissionHelper::can('view deals');
     }
 
     public function getDealsByStage(): array

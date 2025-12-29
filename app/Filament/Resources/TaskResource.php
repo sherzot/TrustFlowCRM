@@ -12,6 +12,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\DateHelper;
+use App\Helpers\PermissionHelper;
 
 class TaskResource extends Resource
 {
@@ -43,17 +44,17 @@ class TaskResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('view tasks');
+        return PermissionHelper::can('view tasks');
     }
 
     public static function canViewAny(): bool
     {
-        return Auth::user()->can('view tasks');
+        return PermissionHelper::can('view tasks');
     }
 
     public static function canCreate(): bool
     {
-        return Auth::user()->can('create tasks');
+        return PermissionHelper::can('create tasks');
     }
 
     public static function form(Form $form): Form

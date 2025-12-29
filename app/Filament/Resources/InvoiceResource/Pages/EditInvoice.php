@@ -6,6 +6,7 @@ use App\Filament\Resources\InvoiceResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class EditInvoice extends EditRecord
 {
@@ -15,13 +16,13 @@ class EditInvoice extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn () => Auth::user()->can('delete invoices')),
+                ->visible(fn () => PermissionHelper::can('delete invoices')),
         ];
     }
 
     public function canDelete(): bool
     {
-        return Auth::user()->can('delete invoices');
+        return PermissionHelper::can('delete invoices');
     }
 }
 
