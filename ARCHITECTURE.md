@@ -237,41 +237,23 @@ Revenue (ROI & Profit Tracked)
 
 ### Environment Variables (.env)
 
-```env
-# Application
-APP_NAME="TrustFlow CRM"
-APP_ENV=local
-APP_KEY=
-APP_DEBUG=true
-APP_URL=http://localhost:8080
-APP_LOCALE=ja
-APP_FALLBACK_LOCALE=en
+Copy `.env.example` to `.env` and configure the following variables:
 
-# Database
-DB_CONNECTION=mysql
-DB_HOST=db
-DB_PORT=3306
-DB_DATABASE=trustflow_crm
-DB_USERNAME=trustflow
-DB_PASSWORD=root
+**Required Variables:**
+- `APP_KEY` - Application encryption key (generated automatically)
+- `DB_HOST` - Database host (`db` for Docker, `localhost` for local)
+- `DB_DATABASE` - Database name
+- `DB_USERNAME` - Database username
+- `DB_PASSWORD` - Database password
+- `REDIS_HOST` - Redis host (`redis` for Docker, `127.0.0.1` for local)
 
-# Redis
-REDIS_HOST=redis
-REDIS_PASSWORD=null
-REDIS_PORT=6379
+**Optional Variables:**
+- `OPENAI_API_KEY` - OpenAI API key for AI features
+- `AWS_ACCESS_KEY_ID` - AWS S3 access key (if using S3)
+- `AWS_SECRET_ACCESS_KEY` - AWS S3 secret key (if using S3)
+- `AWS_BUCKET` - AWS S3 bucket name (if using S3)
 
-# Queue
-QUEUE_CONNECTION=redis
-
-# OpenAI
-OPENAI_API_KEY=
-
-# AWS S3 (optional)
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_DEFAULT_REGION=us-east-1
-AWS_BUCKET=
-```
+> ⚠️ **Security Note**: Never commit your `.env` file to version control. Always use `.env.example` as a template and keep your actual credentials secure.
 
 ## Multi-Language Setup
 
@@ -367,6 +349,15 @@ AWS_BUCKET=
 - Tenant data isolation
 - Password hashing (bcrypt)
 - API token authentication (Sanctum)
+
+### Security Best Practices
+
+- ⚠️ **Never commit `.env` file** - Contains sensitive credentials
+- ⚠️ **Change default passwords** - Update default user passwords after installation
+- ⚠️ **Use strong passwords** - For database, Redis, and admin accounts
+- ⚠️ **Keep API keys secure** - Store OpenAI and AWS keys securely
+- ⚠️ **Set `APP_DEBUG=false`** - In production environments
+- ⚠️ **Use HTTPS** - Always use SSL/TLS in production
 
 ## Performance
 
