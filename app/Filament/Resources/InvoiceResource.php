@@ -166,7 +166,7 @@ class InvoiceResource extends Resource
                     ]),
                 Tables\Columns\TextColumn::make('paid_at')
                     ->label(__('filament.paid_at'))
-                    ->dateTime()
+                    ->formatStateUsing(fn ($state) => DateHelper::formatDateTime($state))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

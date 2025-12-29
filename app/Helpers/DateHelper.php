@@ -66,5 +66,27 @@ class DateHelper
     {
         return 'Y-m-d'; // Always use ISO format for storage
     }
+
+    /**
+     * Format datetime according to locale
+     */
+    public static function formatDateTime($datetime): ?string
+    {
+        if (!$datetime) {
+            return null;
+        }
+
+        if (is_string($datetime)) {
+            $datetime = Carbon::parse($datetime);
+        }
+
+        $locale = App::getLocale();
+        
+        if ($locale === 'ja') {
+            return $datetime->format('Y年m月d日 H:i');
+        }
+        
+        return $datetime->format('Y.m.d H:i');
+    }
 }
 

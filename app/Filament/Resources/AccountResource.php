@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\DateHelper;
 
 class AccountResource extends Resource
 {
@@ -142,7 +143,7 @@ class AccountResource extends Resource
                     ]),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('common.created_at'))
-                    ->dateTime()
+                    ->formatStateUsing(fn ($state) => DateHelper::formatDateTime($state))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

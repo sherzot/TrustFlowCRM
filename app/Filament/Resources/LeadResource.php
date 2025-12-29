@@ -12,6 +12,7 @@ use Filament\Tables\Table;
 use App\Domains\Sales\SalesService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\DateHelper;
 
 class LeadResource extends Resource
 {
@@ -152,7 +153,7 @@ class LeadResource extends Resource
                     ]),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('common.created_at'))
-                    ->dateTime()
+                    ->formatStateUsing(fn ($state) => DateHelper::formatDateTime($state))
                     ->sortable(),
             ])
             ->filters([
