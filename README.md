@@ -13,12 +13,15 @@ AI-powered, multi-tenant CRM system for managing sales, projects, and finance op
 ### Core Features
 - **Multi-tenant Architecture** - Isolated workspaces for each agency
 - **Multi-Language Support** - Japanese (main), English, Russian with dynamic switching
+- **Role-Based Access Control (RBAC)** - 6 roles with granular permissions
+- **Locale-based Date Formatting** - Automatic date format based on language
 - **AI-Powered** - Lead scoring, deal prediction, email generation, NLP
 - **Sales Pipeline** - Complete lead to deal conversion tracking
 - **Project Management** - Time tracking, tasks, Kanban boards
 - **Finance Management** - Invoicing, multi-currency, profit tracking
 - **Analytics & Reporting** - Sales funnel, profit charts, OKR dashboard
 - **System Health Monitoring** - Real-time system component status
+- **Performance Optimized** - Redis caching, database indexes, eager loading
 
 ### Filament Resources
 - ✅ Accounts - Company/Account management
@@ -178,9 +181,46 @@ Access the application at: `http://localhost:8080/admin`
 
 All Filament Resources and Pages are fully translated.
 
+### Date Formatting
+
+Dates are automatically formatted based on current locale:
+- **Japanese**: `2025年12月29日` (Y年m月d日)
+- **English/Russian**: `2025.12.29` (Y.m.d)
+- **DateTime**: Includes time component (H:i)
+- Applied to all DatePicker components and table columns
+
+## 🔐 Role-Based Access Control (RBAC)
+
+The system implements comprehensive RBAC with 6 roles:
+
+### Roles & Permissions
+
+1. **Super Admin** - Full access to all resources and tenants
+2. **Admin** - Full access to own tenant (view, create, edit - no delete)
+3. **Manager** - Read-only with edit capability (no create, no delete)
+4. **Sales** - Sales resources only (Accounts, Contacts, Leads, Deals)
+5. **Delivery** - Delivery resources only (Projects, Tasks)
+6. **Finance** - Finance resources only (Invoices)
+
+### Features
+
+- **Navigation Visibility** - Resources visible based on permissions
+- **Action Permissions** - Create, edit, delete actions checked per role
+- **Page Visibility** - Custom pages respect role permissions
+- **Widget Visibility** - Widgets show data based on role access
+
+See `ROLE_BASED_ACCESS.md` for detailed permission matrix.
+
 ## 👥 Default Users
 
-After seeding, default users are created. Check `database/seeders/UserSeeder.php` for credentials.
+After seeding, the following test users are created:
+
+- **Super Admin**: `admin@trustflow.com` / `password`
+- **Admin**: `admin@test.com` / `admin123`
+- **Manager**: `manager@test.com` / `manager123`
+- **Sales**: `sales@test.com` / `sales123`
+- **Delivery**: `delivery@test.com` / `delivery123`
+- **Finance**: `finance@test.com` / `finance123`
 
 > ⚠️ **Security Note**: Change default passwords immediately after first login in production environments.
 
@@ -304,6 +344,28 @@ The application is automatically built and pushed to Docker Hub:
 - **Horizon Dashboard** - Queue monitoring at `/admin/horizon`
 - **Activity Log** - User action tracking
 - **Error Logging** - Laravel log files
+
+## ⚡ Performance
+
+The system is optimized for performance:
+
+- **Redis Caching** - Default cache driver
+- **Database Indexing** - Comprehensive indexes on tenant_id, status, foreign keys
+- **Eager Loading** - All relationships loaded to prevent N+1 queries
+- **Queue Processing** - Background jobs via Laravel Horizon
+- **Optimized Queries** - Composite indexes for common query patterns
+
+## 🛠️ Helper Classes
+
+### DateHelper
+- Locale-aware date formatting
+- Automatic format switching based on language
+- Used in all DatePicker components and table columns
+
+### TenantHelper
+- Tenant management utilities
+- Ensures default tenant exists
+- Handles tenant_id assignment for Super Admin users
 
 ## 🤝 Contributing
 

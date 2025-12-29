@@ -33,6 +33,9 @@ trustflow-crm/
 │   ├── Http/
 │   │   └── Middleware/
 │   │       └── SetLocale.php  # Multi-language middleware
+│   ├── Helpers/            # Helper classes
+│   │   ├── DateHelper.php  # Locale-based date formatting
+│   │   └── TenantHelper.php # Tenant management helpers
 │   ├── Models/             # Eloquent models
 │   ├── Services/           # AI services
 │   ├── Observers/          # Model observers
@@ -84,6 +87,10 @@ trustflow-crm/
 - SetLocale middleware for automatic locale detection
 - All Filament Resources and Pages fully translated
 - Translation files: `resources/lang/{locale}/filament.php`
+- **Locale-based Date Formatting**: 
+  - Japanese: `2025年12月29日` (Y年m月d日)
+  - English/Russian: `2025.12.29` (Y.m.d)
+  - Applied to all DatePicker components and date columns
 
 ### 3. AI-Powered Features
 - **Lead Scoring**: Automatic lead quality scoring
@@ -159,14 +166,65 @@ trustflow-crm/
 ### Networks
 - `trustflow-network` - Bridge network for inter-container communication
 
-## User Roles
+## User Roles & Permissions
 
-1. **Super Admin**: Platform owner, manages tenants (no tenant_id)
-2. **Agency Admin**: Manages agency settings, OKRs
-3. **Sales Team**: Handles leads, deals, proposals
-4. **Delivery Team**: Manages projects, tasks, time tracking
-5. **Finance Team**: Manages invoices, costs, profit
-6. **Client**: Access to client portal
+### Role-Based Access Control (RBAC)
+
+The system implements comprehensive RBAC with the following roles:
+
+1. **Super Admin** (`super_admin`)
+   - Platform owner, manages all tenants
+   - No `tenant_id` (can access all tenants)
+   - All permissions: view, create, edit, delete
+   - Access to all resources and system pages
+
+2. **Admin** (`admin`)
+   - Manages agency settings and OKRs
+   - Own tenant only (`tenant_id` required)
+   - Permissions: view, create, edit (no delete)
+   - Access to all resources except system management
+
+3. **Manager** (`manager`)
+   - Read-only access with edit capability
+   - Own tenant only
+   - Permissions: view, edit (no create, no delete)
+   - Can view all resources but cannot create or delete
+
+4. **Sales** (`sales`)
+   - Sales-focused role
+   - Own tenant only
+   - Permissions: view, create, edit for Sales resources only
+   - Resources: Accounts, Contacts, Leads, Deals
+   - Hidden: Projects, Tasks, Invoices
+
+5. **Delivery** (`delivery`)
+   - Project delivery focused
+   - Own tenant only
+   - Permissions: view, create, edit for Delivery resources only
+   - Resources: Projects, Tasks
+   - Hidden: Accounts, Contacts, Leads, Deals, Invoices
+
+6. **Finance** (`finance`)
+   - Finance-focused role
+   - Own tenant only
+   - Permissions: view, create, edit for Finance resources only
+   - Resources: Invoices
+   - Hidden: All other resources
+
+### Permission System
+
+- **Permissions**: Managed via Spatie Laravel Permission
+- **Navigation Visibility**: Resources visible based on `view {resource}` permission
+- **Action Permissions**: Create, edit, delete actions checked per role
+- **Page Visibility**: Custom pages check permissions before displaying
+- **Widget Visibility**: Widgets respect role-based access
+
+### Implementation
+
+- All Resources implement `shouldRegisterNavigation()`, `canViewAny()`, `canCreate()`
+- Table actions use `visible()` closures for permission checks
+- Edit pages implement `canDelete()` method
+- Custom pages implement `shouldRegisterNavigation()` for visibility control
 
 ## Filament Resources
 
@@ -235,23 +293,9 @@ Revenue (ROI & Profit Tracked)
 
 ## Configuration
 
-### Environment Variables (.env)
+### Environment Variables
 
-Copy `.env.example` to `.env` and configure the following variables:
-
-**Required Variables:**
-- `APP_KEY` - Application encryption key (generated automatically)
-- `DB_HOST` - Database host (`db` for Docker, `localhost` for local)
-- `DB_DATABASE` - Database name
-- `DB_USERNAME` - Database username
-- `DB_PASSWORD` - Database password
-- `REDIS_HOST` - Redis host (`redis` for Docker, `127.0.0.1` for local)
-
-**Optional Variables:**
-- `OPENAI_API_KEY` - OpenAI API key for AI features
-- `AWS_ACCESS_KEY_ID` - AWS S3 access key (if using S3)
-- `AWS_SECRET_ACCESS_KEY` - AWS S3 secret key (if using S3)
-- `AWS_BUCKET` - AWS S3 bucket name (if using S3)
+Copy `.env.example` to `.env` and configure your environment variables. See `.env.example` for all available options.
 
 > ⚠️ **Security Note**: Never commit your `.env` file to version control. Always use `.env.example` as a template and keep your actual credentials secure.
 
@@ -359,13 +403,36 @@ Copy `.env.example` to `.env` and configure the following variables:
 - ⚠️ **Set `APP_DEBUG=false`** - In production environments
 - ⚠️ **Use HTTPS** - Always use SSL/TLS in production
 
-## Performance
+## Performance Optimization
 
-- Redis caching
-- Queue processing via Horizon
-- Database indexing
-- Eager loading relationships
-- Image optimization
+### Implemented Optimizations
+
+- **Redis Caching**: Default cache driver set to Redis
+- **Queue Processing**: Laravel Horizon for background jobs
+- **Database Indexing**: Comprehensive indexes on:
+  - `tenant_id` columns (all tables)
+  - `status` columns (frequently filtered)
+  - Foreign keys (`account_id`, `contact_id`, `project_id`, etc.)
+  - Composite indexes for common query patterns
+- **Eager Loading**: All Resources use `with()` to prevent N+1 queries
+  - Relationships loaded: `tenant`, `account`, `contact`, `project`, `deal`, `assignee`
+- **Laravel Optimization**: 
+  - Config caching: `php artisan config:cache`
+  - Route caching: `php artisan route:cache`
+  - View caching: `php artisan view:cache`
+  - Application optimization: `php artisan optimize`
+
+### Database Indexes
+
+Indexes added to:
+- `accounts`: tenant_id, status, (tenant_id, status)
+- `contacts`: tenant_id, account_id, status, (tenant_id, account_id), (tenant_id, status)
+- `leads`: tenant_id, status, source, (tenant_id, status), (tenant_id, source)
+- `deals`: tenant_id, account_id, contact_id, stage, status, (tenant_id, account_id), (tenant_id, stage), (tenant_id, status)
+- `projects`: tenant_id, deal_id, account_id, status, (tenant_id, account_id), (tenant_id, status)
+- `tasks`: tenant_id, project_id, assigned_to, status, priority, (tenant_id, project_id), (tenant_id, status), (tenant_id, priority)
+- `invoices`: tenant_id, project_id, account_id, status, (tenant_id, account_id), (tenant_id, status)
+- `users`: tenant_id, role, (tenant_id, role)
 
 ## Monitoring
 
@@ -373,6 +440,180 @@ Copy `.env.example` to `.env` and configure the following variables:
 - Horizon dashboard for queue monitoring
 - Activity Log for user actions
 - Error logging via Laravel Log
+
+## Helper Classes
+
+### DateHelper
+
+Located at `app/Helpers/DateHelper.php`
+
+Provides locale-aware date formatting:
+- `getDateFormat()` - Returns format string based on locale
+- `formatDate($date)` - Formats date according to locale
+- `formatDateTime($datetime)` - Formats datetime with time
+- `getDatePickerDisplayFormat()` - Format for Filament DatePicker display
+- `getDatePickerFormat()` - Format for DatePicker storage (ISO: Y-m-d)
+
+**Formats:**
+- Japanese: `2025年12月29日` (date), `2025年12月29日 14:30` (datetime)
+- English/Russian: `2025.12.29` (date), `2025.12.29 14:30` (datetime)
+
+### TenantHelper
+
+Located at `app/Helpers/TenantHelper.php`
+
+Provides tenant management utilities:
+- `getTenantId()` - Returns current user's tenant_id or creates default tenant (id=1)
+- Ensures default tenant exists for Super Admin users
+
+## System Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        TrustFlow CRM v3.0                        │
+│                    Enterprise B2B Growth Engine                  │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                         Client Layer                            │
+├─────────────────────────────────────────────────────────────────┤
+│  Web Browser → Nginx (Port 8080) → PHP-FPM (Port 9000)         │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                      Application Layer                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              Filament Admin Panel (v3.2+)                │  │
+│  ├──────────────────────────────────────────────────────────┤  │
+│  │  Resources: Accounts, Contacts, Leads, Deals,           │  │
+│  │             Projects, Tasks, Invoices                    │  │
+│  │  Pages: Dashboard, Kanban, OKR, System Health, Locale    │  │
+│  │  Widgets: AI Insights, Sales Funnel, Profit Chart       │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              Laravel Framework (v11)                     │  │
+│  ├──────────────────────────────────────────────────────────┤  │
+│  │  • Multi-Language (ja, en, ru)                           │  │
+│  │  • RBAC (6 Roles: Super Admin, Admin, Manager,          │  │
+│  │    Sales, Delivery, Finance)                            │  │
+│  │  • Multi-Tenancy (Stancl Tenancy v3.0)                  │  │
+│  │  • Date Formatting (Locale-based)                       │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              Domain Services                              │  │
+│  ├──────────────────────────────────────────────────────────┤  │
+│  │  • SalesService      - Lead conversion, Deal management │  │
+│  │  • DeliveryService   - Project & Task management        │  │
+│  │  • FinanceService    - Invoice & Payment processing     │  │
+│  │  • AnalyticsService  - Reporting & Insights             │  │
+│  │  • IntegrationService - External API integrations        │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              AI Services                                  │  │
+│  ├──────────────────────────────────────────────────────────┤  │
+│  │  • Lead Scoring      - Automatic quality assessment      │  │
+│  │  • Deal Prediction   - Success probability calculation   │  │
+│  │  • Email Generation  - AI-generated content              │  │
+│  │  • NLP Processing    - Natural language understanding    │  │
+│  │  • Risk Detection    - Deal risk analysis                │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                      Data Layer                                  │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────┐         ┌──────────────────┐             │
+│  │   MySQL 8.0      │         │   Redis 7       │             │
+│  │   (Port 3306)    │         │   (Port 6379)   │             │
+│  ├──────────────────┤         ├──────────────────┤             │
+│  │ • Core Tables    │         │ • Cache          │             │
+│  │ • System Tables  │         │ • Session        │             │
+│  │ • Indexes        │         │ • Queue          │             │
+│  └──────────────────┘         └──────────────────┘             │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                    Background Processing                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │         Laravel Horizon (Queue Worker)                  │  │
+│  ├──────────────────────────────────────────────────────────┤  │
+│  │  • AI Processing Jobs                                    │  │
+│  │  • Email Notifications                                   │  │
+│  │  • Data Synchronization                                  │  │
+│  │  • Report Generation                                     │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    External Services                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
+│  │   OpenAI     │  │   AWS S3     │  │  Telegram    │         │
+│  │   (GPT-4)    │  │   (Storage)  │  │  (Notif.)    │         │
+│  └──────────────┘  └──────────────┘  └──────────────┘         │
+│                                                                 │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
+│  │   Jira       │  │   Xero       │  │  WhatsApp    │         │
+│  │   (Tasks)    │  │   (Accounting)│  │  (Messaging) │         │
+│  └──────────────┘  └──────────────┘  └──────────────┘         │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    Data Flow                                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Web-to-Lead                                                    │
+│      ↓                                                          │
+│  Lead (AI Scored)                                              │
+│      ↓                                                          │
+│  Account + Contact                                             │
+│      ↓                                                          │
+│  Deal (AI Scored, Kanban Board)                                │
+│      ↓                                                          │
+│  Project (Time Tracked, Tasks)                                 │
+│      ↓                                                          │
+│  Invoice (Auto-generated)                                      │
+│      ↓                                                          │
+│  Revenue (ROI & Profit Tracked)                                │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    Security & Access Control                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Authentication: Filament Auth                                 │
+│      ↓                                                          │
+│  Authorization: Spatie Permission (RBAC)                      │
+│      ↓                                                          │
+│  Data Isolation: Multi-Tenancy (tenant_id)                     │
+│      ↓                                                          │
+│  Role-Based Navigation & Actions                               │
+│                                                                 │
+│  Roles:                                                        │
+│  • Super Admin → All resources, all tenants                   │
+│  • Admin → All resources, own tenant, no delete              │
+│  • Manager → View & edit only, own tenant                     │
+│  • Sales → Sales resources only (Accounts, Contacts, Leads,   │
+│            Deals)                                             │
+│  • Delivery → Delivery resources only (Projects, Tasks)       │
+│  • Finance → Finance resources only (Invoices)                │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ## License
 
