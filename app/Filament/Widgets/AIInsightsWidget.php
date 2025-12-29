@@ -8,10 +8,17 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Auth;
 use App\Domains\Analytics\AnalyticsService;
+use App\Helpers\PermissionHelper;
 
 class AIInsightsWidget extends BaseWidget
 {
     protected static ?int $sort = 3;
+
+    public static function shouldBeVisibleInDashboards(): bool
+    {
+        // Super Admin, Admin, Manager, and Sales can see this widget
+        return PermissionHelper::hasAnyRole(['super_admin', 'admin', 'manager', 'sales']);
+    }
 
     protected function getStats(): array
     {

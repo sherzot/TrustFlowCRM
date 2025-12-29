@@ -5,12 +5,19 @@ namespace App\Filament\Widgets;
 use App\Models\Deal;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class SalesFunnelWidget extends ChartWidget
 {
     protected static ?string $heading = 'Sales Funnel';
 
     protected static ?int $sort = 1;
+
+    public static function shouldBeVisibleInDashboards(): bool
+    {
+        // Super Admin, Admin, Manager, and Sales can see this widget
+        return PermissionHelper::hasAnyRole(['super_admin', 'admin', 'manager', 'sales']);
+    }
 
     protected function getData(): array
     {

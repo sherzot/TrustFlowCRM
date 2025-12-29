@@ -6,12 +6,19 @@ use App\Models\Invoice;
 use App\Models\Project;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 class ProfitChartWidget extends ChartWidget
 {
     protected static ?string $heading = 'Profit Chart';
 
     protected static ?int $sort = 2;
+
+    public static function shouldBeVisibleInDashboards(): bool
+    {
+        // Super Admin, Admin, Manager, and Finance can see this widget
+        return PermissionHelper::hasAnyRole(['super_admin', 'admin', 'manager', 'finance']);
+    }
 
     protected function getData(): array
     {
