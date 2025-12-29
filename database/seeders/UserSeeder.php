@@ -10,12 +10,12 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Super Admin (tenant_id = null)
+        // Super Admin (tenant_id = null) - admin@trustflow.com
         $superAdmin = User::firstOrCreate(
-            ['email' => 'superadmin@test.com'],
+            ['email' => 'admin@trustflow.com'],
             [
                 'name' => 'Super Admin',
-                'password' => Hash::make('superadmin123'),
+                'password' => Hash::make('password'),
                 'tenant_id' => null,
                 'role' => 'super_admin',
             ]
