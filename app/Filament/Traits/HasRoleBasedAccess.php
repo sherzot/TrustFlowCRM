@@ -3,6 +3,7 @@
 namespace App\Filament\Traits;
 
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\PermissionHelper;
 
 trait HasRoleBasedAccess
 {
@@ -12,7 +13,7 @@ trait HasRoleBasedAccess
     public static function canViewAny(): bool
     {
         $permission = static::getViewPermission();
-        return Auth::user()->can($permission);
+        return PermissionHelper::can($permission);
     }
 
     /**
@@ -21,7 +22,7 @@ trait HasRoleBasedAccess
     public static function canCreate(): bool
     {
         $permission = static::getCreatePermission();
-        return Auth::user()->can($permission);
+        return PermissionHelper::can($permission);
     }
 
     /**
@@ -30,7 +31,7 @@ trait HasRoleBasedAccess
     public static function shouldRegisterNavigation(): bool
     {
         $permission = static::getViewPermission();
-        return Auth::user()->can($permission);
+        return PermissionHelper::can($permission);
     }
 
     /**
