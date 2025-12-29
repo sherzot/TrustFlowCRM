@@ -158,7 +158,7 @@ class ProjectResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
                     ->label(__('filament.start_date'))
-                    ->date()
+                    ->formatStateUsing(fn ($state) => DateHelper::formatDate($state))
                     ->sortable(),
             ])
             ->filters([
