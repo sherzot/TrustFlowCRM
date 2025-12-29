@@ -145,11 +145,11 @@ class InvoiceResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('issue_date')
                     ->label(__('filament.issue_date'))
-                    ->date()
+                    ->formatStateUsing(fn ($state) => DateHelper::formatDate($state))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('due_date')
                     ->label(__('filament.due_date'))
-                    ->date()
+                    ->formatStateUsing(fn ($state) => DateHelper::formatDate($state))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total')
                     ->label(__('filament.total'))

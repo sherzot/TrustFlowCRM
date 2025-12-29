@@ -144,7 +144,7 @@ class TaskResource extends Resource
                     ]),
                 Tables\Columns\TextColumn::make('due_date')
                     ->label(__('filament.due_date'))
-                    ->date()
+                    ->formatStateUsing(fn ($state) => DateHelper::formatDate($state))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('estimated_hours')
                     ->label(__('filament.estimated_hours')),

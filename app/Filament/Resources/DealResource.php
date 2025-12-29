@@ -166,7 +166,7 @@ class DealResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('expected_close_date')
                     ->label(__('filament.expected_close_date'))
-                    ->date()
+                    ->formatStateUsing(fn ($state) => DateHelper::formatDate($state))
                     ->sortable(),
             ])
             ->filters([
