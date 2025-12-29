@@ -14,7 +14,7 @@ return [
     'finance' => '財務',
     'system' => 'システム',
     'settings' => '設定',
-    
+
     // Form Fields
     'first_name' => '名',
     'last_name' => '姓',
@@ -37,7 +37,7 @@ return [
     'annual_revenue' => '年間収益',
     'employee_count' => '従業員数',
     'ai_score' => 'AIスコア',
-    
+
     // Lead Fields
     'source' => 'ソース',
     'company' => '会社',
@@ -47,7 +47,7 @@ return [
     'qualified' => '資格あり',
     'converted' => '変換済み',
     'convert' => '変換',
-    
+
     // Deal Fields
     'contact' => '連絡先',
     'value' => '価値',
@@ -64,7 +64,7 @@ return [
     'discovery' => '発見',
     'proposal' => '提案',
     'negotiation' => '交渉',
-    
+
     // Project Fields
     'deal' => '取引',
     'start_date' => '開始日',
@@ -77,7 +77,7 @@ return [
     'on_hold' => '保留中',
     'completed' => '完了',
     'cancelled' => 'キャンセル',
-    
+
     // Task Fields
     'project' => 'プロジェクト',
     'assigned_to' => '担当者',
@@ -93,7 +93,7 @@ return [
     'medium' => '中',
     'high' => '高',
     'urgent' => '緊急',
-    
+
     // Invoice Fields
     'invoice_number' => '請求書番号',
     'issue_date' => '発行日',
@@ -107,11 +107,11 @@ return [
     'sent' => '送信済み',
     'paid' => '支払済み',
     'overdue' => '期限切れ',
-    
+
     // Status Options
     'active' => 'アクティブ',
     'inactive' => '非アクティブ',
-    
+
     // Actions
     'create' => '作成',
     'edit' => '編集',
@@ -119,20 +119,20 @@ return [
     'save' => '保存',
     'cancel' => 'キャンセル',
     'select_option' => 'オプションを選択',
-    
+
     // Additional Options
     'referral' => '紹介',
     'social_media' => 'ソーシャルメディア',
     'email_campaign' => 'メールキャンペーン',
     'other' => 'その他',
-    
+
     // Pages
     'dashboard' => 'ダッシュボード',
     'kanban_board' => 'かんばんボード',
     'system_health' => 'システムヘルス',
     'okr_dashboard' => 'OKRダッシュボード',
     'analytics' => '分析',
-    
+
     // System Health
     'database' => 'データベース',
     'cache' => 'キャッシュ',
@@ -145,7 +145,7 @@ return [
     'cache_is_working' => 'キャッシュは動作しています',
     'queue_size' => 'キューサイズ',
     'storage_used' => 'ストレージ使用率',
-    
+
     // OKR Dashboard
     'deals_won' => '獲得した取引',
     'deals_value' => '取引価値',
@@ -154,9 +154,8 @@ return [
     'current_value' => '現在の値',
     'target' => '目標',
     'progress' => '進捗',
-    
+
     // Kanban Board
     'no_deals' => '取引なし',
     'ai_score_label' => 'AIスコア',
 ];
-
