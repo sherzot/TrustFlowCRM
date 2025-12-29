@@ -12455,3 +12455,4 @@ Stack trace:
 #66 /var/www/html/public/index.php(17): Illuminate\\Foundation\\Application->handleRequest(Object(Illuminate\\Http\\Request))
 #67 {main}
 "} 
+[2025-12-29 13:12:43] local.ERROR: AI Lead Scoring Error: OpenAI API key not configured  

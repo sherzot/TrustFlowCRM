@@ -10,12 +10,12 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Super Admin
+        // Super Admin (tenant_id = null)
         $superAdmin = User::firstOrCreate(
-            ['email' => 'admin@trustflow.com'],
+            ['email' => 'superadmin@test.com'],
             [
                 'name' => 'Super Admin',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('superadmin123'),
                 'tenant_id' => null,
                 'role' => 'super_admin',
             ]
@@ -24,18 +24,74 @@ class UserSeeder extends Seeder
             $superAdmin->assignRole('super_admin');
         }
 
-        // Demo Tenant Admin
+        // Admin (tenant_id = 1)
         $admin = User::firstOrCreate(
-            ['email' => 'admin@demo.com'],
+            ['email' => 'admin@test.com'],
             [
-                'name' => 'Demo Admin',
-                'password' => Hash::make('password'),
+                'name' => 'Admin User',
+                'password' => Hash::make('admin123'),
                 'tenant_id' => 1,
                 'role' => 'admin',
             ]
         );
         if (!$admin->hasRole('admin')) {
             $admin->assignRole('admin');
+        }
+
+        // Manager (tenant_id = 1)
+        $manager = User::firstOrCreate(
+            ['email' => 'manager@test.com'],
+            [
+                'name' => 'Manager User',
+                'password' => Hash::make('manager123'),
+                'tenant_id' => 1,
+                'role' => 'manager',
+            ]
+        );
+        if (!$manager->hasRole('manager')) {
+            $manager->assignRole('manager');
+        }
+
+        // Sales (tenant_id = 1)
+        $sales = User::firstOrCreate(
+            ['email' => 'sales@test.com'],
+            [
+                'name' => 'Sales User',
+                'password' => Hash::make('sales123'),
+                'tenant_id' => 1,
+                'role' => 'sales',
+            ]
+        );
+        if (!$sales->hasRole('sales')) {
+            $sales->assignRole('sales');
+        }
+
+        // Delivery (tenant_id = 1)
+        $delivery = User::firstOrCreate(
+            ['email' => 'delivery@test.com'],
+            [
+                'name' => 'Delivery User',
+                'password' => Hash::make('delivery123'),
+                'tenant_id' => 1,
+                'role' => 'delivery',
+            ]
+        );
+        if (!$delivery->hasRole('delivery')) {
+            $delivery->assignRole('delivery');
+        }
+
+        // Finance (tenant_id = 1)
+        $finance = User::firstOrCreate(
+            ['email' => 'finance@test.com'],
+            [
+                'name' => 'Finance User',
+                'password' => Hash::make('finance123'),
+                'tenant_id' => 1,
+                'role' => 'finance',
+            ]
+        );
+        if (!$finance->hasRole('finance')) {
+            $finance->assignRole('finance');
         }
     }
 }
