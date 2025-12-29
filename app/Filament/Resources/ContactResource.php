@@ -43,17 +43,17 @@ class ContactResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('view contacts');
+        return PermissionHelper::can('view contacts');
     }
 
     public static function canViewAny(): bool
     {
-        return Auth::user()->can('view contacts');
+        return PermissionHelper::can('view contacts');
     }
 
     public static function canCreate(): bool
     {
-        return Auth::user()->can('create contacts');
+        return PermissionHelper::can('create contacts');
     }
 
     public static function form(Form $form): Form
