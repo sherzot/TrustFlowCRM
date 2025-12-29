@@ -32,6 +32,10 @@ class RoleSeeder extends Seeder
             'create projects',
             'edit projects',
             'delete projects',
+            'view tasks',
+            'create tasks',
+            'edit tasks',
+            'delete tasks',
             'view invoices',
             'create invoices',
             'edit invoices',
@@ -81,9 +85,10 @@ class RoleSeeder extends Seeder
             'view deals', 'create deals', 'edit deals',
         ]);
 
-        // Delivery ga project permissionlar
+        // Delivery ga project va task permissionlar
         $delivery->givePermissionTo([
             'view projects', 'create projects', 'edit projects',
+            'view tasks', 'create tasks', 'edit tasks',
         ]);
 
         // Finance ga invoice permissionlar

@@ -6,6 +6,7 @@ use App\Filament\Resources\AccountResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class ListAccounts extends ListRecords
 {
@@ -14,7 +15,8 @@ class ListAccounts extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->visible(fn () => Auth::user()->can('create accounts')),
         ];
     }
 

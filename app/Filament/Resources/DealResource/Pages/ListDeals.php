@@ -5,6 +5,7 @@ namespace App\Filament\Resources\DealResource\Pages;
 use App\Filament\Resources\DealResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Auth;
 
 class ListDeals extends ListRecords
 {
@@ -13,7 +14,8 @@ class ListDeals extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->visible(fn () => Auth::user()->can('create deals')),
         ];
     }
 }

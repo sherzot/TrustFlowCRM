@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class ContactResource extends Resource
 {
@@ -37,6 +38,21 @@ class ContactResource extends Resource
     public static function getNavigationLabel(): string
     {
         return __('filament.contacts');
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view contacts');
+    }
+
+    public static function canViewAny(): bool
+    {
+        return Auth::user()->can('view contacts');
+    }
+
+    public static function canCreate(): bool
+    {
+        return Auth::user()->can('create contacts');
     }
 
     public static function form(Form $form): Form
@@ -131,12 +147,15 @@ class ContactResource extends Resource
                     ->relationship('account', 'name'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn ($record) => Auth::user()->can('edit contacts')),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn ($record) => Auth::user()->can('delete contacts')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => Auth::user()->can('delete contacts')),
                 ]),
             ]);
     }

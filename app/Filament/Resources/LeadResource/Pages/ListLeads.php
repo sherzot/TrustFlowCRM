@@ -5,6 +5,7 @@ namespace App\Filament\Resources\LeadResource\Pages;
 use App\Filament\Resources\LeadResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Auth;
 
 class ListLeads extends ListRecords
 {
@@ -13,7 +14,8 @@ class ListLeads extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->visible(fn () => Auth::user()->can('create leads')),
         ];
     }
 }

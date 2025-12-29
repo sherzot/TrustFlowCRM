@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class InvoiceResource extends Resource
 {
@@ -37,6 +38,21 @@ class InvoiceResource extends Resource
     public static function getNavigationGroup(): ?string
     {
         return __('filament.finance');
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view invoices');
+    }
+
+    public static function canViewAny(): bool
+    {
+        return Auth::user()->can('view invoices');
+    }
+
+    public static function canCreate(): bool
+    {
+        return Auth::user()->can('create invoices');
     }
 
     public static function form(Form $form): Form
@@ -161,12 +177,15 @@ class InvoiceResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn ($record) => Auth::user()->can('edit invoices')),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn ($record) => Auth::user()->can('delete invoices')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => Auth::user()->can('delete invoices')),
                 ]),
             ]);
     }

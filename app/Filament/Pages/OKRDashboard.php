@@ -28,6 +28,12 @@ class OKRDashboard extends Page
         return __('filament.analytics');
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Only Super Admin, Admin, and Manager can see OKR Dashboard
+        return Auth::user()->hasAnyRole(['super_admin', 'admin', 'manager']);
+    }
+
     public function getObjectives(): array
     {
         $tenantId = Auth::user()->tenant_id;

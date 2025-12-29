@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use App\Domains\Sales\SalesService;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class DealResource extends Resource
 {
@@ -38,6 +39,21 @@ class DealResource extends Resource
     public static function getNavigationGroup(): ?string
     {
         return __('filament.sales');
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view deals');
+    }
+
+    public static function canViewAny(): bool
+    {
+        return Auth::user()->can('view deals');
+    }
+
+    public static function canCreate(): bool
+    {
+        return Auth::user()->can('create deals');
     }
 
     public static function form(Form $form): Form
@@ -176,6 +192,7 @@ class DealResource extends Resource
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
+                    ->visible(fn ($record) => Auth::user()->can('edit deals'))
                     ->action(function (Deal $record) {
                         $salesService = app(SalesService::class);
                         $salesService->winDeal($record);
@@ -185,6 +202,7 @@ class DealResource extends Resource
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->requiresConfirmation()
+                    ->visible(fn ($record) => Auth::user()->can('edit deals'))
                     ->form([
                         Forms\Components\Textarea::make('reason')
                             ->label(__('filament.lost_reason'))
@@ -194,11 +212,13 @@ class DealResource extends Resource
                         $salesService = app(SalesService::class);
                         $salesService->loseDeal($record, $data['reason']);
                     }),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn ($record) => Auth::user()->can('edit deals')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => Auth::user()->can('delete deals')),
                 ]),
             ]);
     }

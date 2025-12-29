@@ -27,6 +27,12 @@ class SystemHealth extends Page
         return __('filament.system');
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Only Super Admin and Admin can see System Health
+        return Auth::user()->hasAnyRole(['super_admin', 'admin']);
+    }
+
     public function getHealthMetrics(): array
     {
         return [

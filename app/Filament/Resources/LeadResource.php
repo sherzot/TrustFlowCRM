@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use App\Domains\Sales\SalesService;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class LeadResource extends Resource
 {
@@ -38,6 +39,21 @@ class LeadResource extends Resource
     public static function getNavigationGroup(): ?string
     {
         return __('filament.sales');
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view leads');
+    }
+
+    public static function canViewAny(): bool
+    {
+        return Auth::user()->can('view leads');
+    }
+
+    public static function canCreate(): bool
+    {
+        return Auth::user()->can('create leads');
     }
 
     public static function form(Form $form): Form
@@ -156,16 +172,20 @@ class LeadResource extends Resource
                     ->label(__('filament.convert'))
                     ->icon('heroicon-o-arrow-right')
                     ->requiresConfirmation()
+                    ->visible(fn ($record) => Auth::user()->can('edit leads'))
                     ->action(function (Lead $record) {
                         $salesService = app(SalesService::class);
                         $salesService->convertLead($record);
                     }),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn ($record) => Auth::user()->can('edit leads')),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn ($record) => Auth::user()->can('delete leads')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => Auth::user()->can('delete leads')),
                 ]),
             ]);
     }

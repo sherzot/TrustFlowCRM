@@ -28,6 +28,11 @@ class KanbanBoard extends Page
         return __('filament.sales');
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view deals');
+    }
+
     public function getDealsByStage(): array
     {
         $tenantId = Auth::user()->tenant_id;

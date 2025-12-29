@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class AccountResource extends Resource
 {
@@ -37,6 +38,21 @@ class AccountResource extends Resource
     public static function getNavigationGroup(): ?string
     {
         return __('filament.sales');
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view accounts');
+    }
+
+    public static function canViewAny(): bool
+    {
+        return Auth::user()->can('view accounts');
+    }
+
+    public static function canCreate(): bool
+    {
+        return Auth::user()->can('create accounts');
     }
 
     public static function form(Form $form): Form
@@ -146,7 +162,8 @@ class AccountResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => Auth::user()->can('delete accounts')),
                 ]),
             ]);
     }

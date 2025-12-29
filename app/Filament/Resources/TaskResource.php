@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class TaskResource extends Resource
 {
@@ -37,6 +38,21 @@ class TaskResource extends Resource
     public static function getNavigationGroup(): ?string
     {
         return __('filament.delivery');
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view tasks');
+    }
+
+    public static function canViewAny(): bool
+    {
+        return Auth::user()->can('view tasks');
+    }
+
+    public static function canCreate(): bool
+    {
+        return Auth::user()->can('create tasks');
     }
 
     public static function form(Form $form): Form
@@ -154,12 +170,15 @@ class TaskResource extends Resource
                     ->relationship('project', 'name'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn ($record) => Auth::user()->can('edit tasks')),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn ($record) => Auth::user()->can('delete tasks')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => Auth::user()->can('delete tasks')),
                 ]),
             ]);
     }
