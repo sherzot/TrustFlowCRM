@@ -5,6 +5,7 @@ namespace App\Filament\Resources\AccountResource\Pages;
 use App\Filament\Resources\AccountResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListAccounts extends ListRecords
 {
@@ -15,6 +16,12 @@ class ListAccounts extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    protected function getTableQuery(): Builder
+    {
+        return parent::getTableQuery()
+            ->with(['tenant']); // Eager load tenant relationship
     }
 }
 

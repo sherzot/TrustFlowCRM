@@ -50,7 +50,7 @@ class KanbanBoard extends Page
             }
             $dealsByStage[$key] = [
                 'label' => $label,
-                'deals' => $dealsQuery->with(['account', 'contact'])
+                'deals' => $dealsQuery->with(['account', 'contact', 'tenant']) // Eager load relationships
                     ->orderBy('created_at', 'desc')
                     ->get()
                     ->toArray(),

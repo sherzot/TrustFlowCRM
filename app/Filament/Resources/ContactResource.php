@@ -90,6 +90,7 @@ class ContactResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['account', 'tenant'])) // Eager load relationships
             ->columns([
                 Tables\Columns\TextColumn::make('first_name')
                     ->label(__('filament.first_name'))

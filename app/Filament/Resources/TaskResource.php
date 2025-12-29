@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class TaskResource extends Resource
 {
@@ -94,6 +95,7 @@ class TaskResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['project', 'assignee', 'tenant'])) // Eager load relationships
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('filament.title'))

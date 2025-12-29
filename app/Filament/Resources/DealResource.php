@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use App\Domains\Sales\SalesService;
+use Illuminate\Database\Eloquent\Builder;
 
 class DealResource extends Resource
 {
@@ -114,6 +115,7 @@ class DealResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['account', 'contact', 'tenant'])) // Eager load relationships
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('filament.name'))
