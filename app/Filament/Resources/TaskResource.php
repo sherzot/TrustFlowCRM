@@ -175,14 +175,14 @@ class TaskResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => Auth::user()->can('edit tasks')),
+                    ->visible(fn ($record) => PermissionHelper::can('edit tasks')),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => Auth::user()->can('delete tasks')),
+                    ->visible(fn ($record) => PermissionHelper::can('delete tasks')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => Auth::user()->can('delete tasks')),
+                        ->visible(fn () => PermissionHelper::can('delete tasks')),
                 ]),
             ]);
     }

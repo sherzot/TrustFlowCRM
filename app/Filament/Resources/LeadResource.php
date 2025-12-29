@@ -174,20 +174,20 @@ class LeadResource extends Resource
                     ->label(__('filament.convert'))
                     ->icon('heroicon-o-arrow-right')
                     ->requiresConfirmation()
-                    ->visible(fn ($record) => Auth::user()->can('edit leads'))
+                    ->visible(fn ($record) => PermissionHelper::can('edit leads'))
                     ->action(function (Lead $record) {
                         $salesService = app(SalesService::class);
                         $salesService->convertLead($record);
                     }),
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => Auth::user()->can('edit leads')),
+                    ->visible(fn ($record) => PermissionHelper::can('edit leads')),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => Auth::user()->can('delete leads')),
+                    ->visible(fn ($record) => PermissionHelper::can('delete leads')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => Auth::user()->can('delete leads')),
+                        ->visible(fn () => PermissionHelper::can('delete leads')),
                 ]),
             ]);
     }

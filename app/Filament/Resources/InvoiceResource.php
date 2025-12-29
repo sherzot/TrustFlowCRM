@@ -184,14 +184,14 @@ class InvoiceResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => Auth::user()->can('edit invoices')),
+                    ->visible(fn ($record) => PermissionHelper::can('edit invoices')),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => Auth::user()->can('delete invoices')),
+                    ->visible(fn ($record) => PermissionHelper::can('delete invoices')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => Auth::user()->can('delete invoices')),
+                        ->visible(fn () => PermissionHelper::can('delete invoices')),
                 ]),
             ]);
     }

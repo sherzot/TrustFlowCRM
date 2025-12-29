@@ -196,7 +196,7 @@ class DealResource extends Resource
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->visible(fn ($record) => Auth::user()->can('edit deals'))
+                    ->visible(fn ($record) => PermissionHelper::can('edit deals'))
                     ->action(function (Deal $record) {
                         $salesService = app(SalesService::class);
                         $salesService->winDeal($record);
@@ -206,7 +206,7 @@ class DealResource extends Resource
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->requiresConfirmation()
-                    ->visible(fn ($record) => Auth::user()->can('edit deals'))
+                    ->visible(fn ($record) => PermissionHelper::can('edit deals'))
                     ->form([
                         Forms\Components\Textarea::make('reason')
                             ->label(__('filament.lost_reason'))
@@ -217,12 +217,12 @@ class DealResource extends Resource
                         $salesService->loseDeal($record, $data['reason']);
                     }),
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => Auth::user()->can('edit deals')),
+                    ->visible(fn ($record) => PermissionHelper::can('edit deals')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => Auth::user()->can('delete deals')),
+                        ->visible(fn () => PermissionHelper::can('delete deals')),
                 ]),
             ]);
     }

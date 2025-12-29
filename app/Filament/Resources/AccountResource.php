@@ -159,13 +159,15 @@ class AccountResource extends Resource
                     ->label(__('filament.industry')),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn ($record) => PermissionHelper::can('edit accounts')),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn ($record) => PermissionHelper::can('delete accounts')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => Auth::user()->can('delete accounts')),
+                        ->visible(fn () => PermissionHelper::can('delete accounts')),
                 ]),
             ]);
     }

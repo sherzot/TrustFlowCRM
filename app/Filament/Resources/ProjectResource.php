@@ -175,14 +175,14 @@ class ProjectResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => Auth::user()->can('edit projects')),
+                    ->visible(fn ($record) => PermissionHelper::can('edit projects')),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => Auth::user()->can('delete projects')),
+                    ->visible(fn ($record) => PermissionHelper::can('delete projects')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => Auth::user()->can('delete projects')),
+                        ->visible(fn () => PermissionHelper::can('delete projects')),
                 ]),
             ]);
     }
