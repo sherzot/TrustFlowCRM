@@ -4,7 +4,7 @@ namespace App\Filament\Resources\LeadResource\Pages;
 
 use App\Filament\Resources\LeadResource;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Support\Facades\Auth;
+use App\Helpers\TenantHelper;
 
 class CreateLead extends CreateRecord
 {
@@ -12,7 +12,7 @@ class CreateLead extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['tenant_id'] = Auth::user()->tenant_id ?? 1;
+        $data['tenant_id'] = TenantHelper::getTenantId();
 
         return $data;
     }

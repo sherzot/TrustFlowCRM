@@ -9,9 +9,11 @@ class TenantSeeder extends Seeder
 {
     public function run(): void
     {
+        // Ensure tenant with id = 1 exists
         Tenant::firstOrCreate(
-            ['name' => 'Demo Agency'],
+            ['id' => 1],
             [
+                'name' => 'Demo Agency',
                 'plan' => 'enterprise',
                 'status' => 'active',
             ]
