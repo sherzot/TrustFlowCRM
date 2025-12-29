@@ -71,26 +71,26 @@ class OKRDashboard extends Page
         $projectsCompleted = $projectsQuery->count();
 
         return [
-            __('filament.deals_won') => [
-                'key' => 'deals_won',
+            'deals_won' => [
+                'label' => __('filament.deals_won'),
                 'current' => $dealsWon,
                 'target' => 20,
                 'percentage' => min(100, ($dealsWon / 20) * 100),
             ],
-            __('filament.deals_value') => [
-                'key' => 'deals_value',
+            'deals_value' => [
+                'label' => __('filament.deals_value'),
                 'current' => $dealsValue,
                 'target' => 500000,
                 'percentage' => min(100, ($dealsValue / 500000) * 100),
             ],
-            __('filament.revenue') => [
-                'key' => 'revenue',
+            'revenue' => [
+                'label' => __('filament.revenue'),
                 'current' => $revenue,
                 'target' => 1000000,
                 'percentage' => min(100, ($revenue / 1000000) * 100),
             ],
-            __('filament.projects_completed') => [
-                'key' => 'projects_completed',
+            'projects_completed' => [
+                'label' => __('filament.projects_completed'),
                 'current' => $projectsCompleted,
                 'target' => 15,
                 'percentage' => min(100, ($projectsCompleted / 15) * 100),

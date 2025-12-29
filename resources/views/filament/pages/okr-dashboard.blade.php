@@ -1,16 +1,16 @@
 <x-filament-panels::page>
     <div class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            @foreach ($this->getObjectives() as $label => $objective)
+            @foreach ($this->getObjectives() as $key => $objective)
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                     <h3 class="font-semibold text-lg mb-4 text-gray-900 dark:text-gray-100">
-                        {{ $label }}
+                        {{ $objective['label'] }}
                     </h3>
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
                             <span class="text-sm text-gray-600 dark:text-gray-400">{{ __('filament.current_value') }}:</span>
                             <span class="font-semibold text-gray-900 dark:text-gray-100">
-                                @if (str_contains($objective['key'], 'value') || str_contains($objective['key'], 'revenue'))
+                                @if (str_contains($key, 'value') || str_contains($key, 'revenue'))
                                     ${{ number_format($objective['current'], 2) }}
                                 @else
                                     {{ number_format($objective['current']) }}
@@ -20,7 +20,7 @@
                         <div class="flex justify-between items-center">
                             <span class="text-sm text-gray-600 dark:text-gray-400">{{ __('filament.target') }}:</span>
                             <span class="font-semibold text-gray-900 dark:text-gray-100">
-                                @if (str_contains($objective['key'], 'value') || str_contains($objective['key'], 'revenue'))
+                                @if (str_contains($key, 'value') || str_contains($key, 'revenue'))
                                     ${{ number_format($objective['target'], 2) }}
                                 @else
                                     {{ number_format($objective['target']) }}
