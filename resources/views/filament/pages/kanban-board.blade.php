@@ -24,13 +24,13 @@
                                 </div>
                                 @if ($deal['ai_score'])
                                     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                        AI Score: {{ number_format($deal['ai_score'], 1) }}
+                                        {{ __('filament.ai_score_label') }}: {{ number_format($deal['ai_score'], 1) }}
                                     </div>
                                 @endif
                             </div>
                         @empty
                             <div class="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
-                                取引なし
+                                {{ __('filament.no_deals') }}
                             </div>
                         @endforelse
                     </div>

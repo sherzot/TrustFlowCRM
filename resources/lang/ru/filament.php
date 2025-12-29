@@ -125,5 +125,38 @@ return [
     'social_media' => 'Социальные сети',
     'email_campaign' => 'Email кампания',
     'other' => 'Другое',
+    
+    // Pages
+    'dashboard' => 'Панель управления',
+    'kanban_board' => 'Канбан доска',
+    'system_health' => 'Состояние системы',
+    'okr_dashboard' => 'OKR Панель',
+    'analytics' => 'Аналитика',
+    
+    // System Health
+    'database' => 'База данных',
+    'cache' => 'Кэш',
+    'queue' => 'Очередь',
+    'storage' => 'Хранилище',
+    'healthy' => 'Здоров',
+    'unhealthy' => 'Не здоров',
+    'warning' => 'Предупреждение',
+    'database_connection_successful' => 'Подключение к базе данных успешно',
+    'cache_is_working' => 'Кэш работает',
+    'queue_size' => 'Размер очереди',
+    'storage_used' => 'Использовано хранилища',
+    
+    // OKR Dashboard
+    'deals_won' => 'Выигранные сделки',
+    'deals_value' => 'Стоимость сделок',
+    'revenue' => 'Доход',
+    'projects_completed' => 'Завершенные проекты',
+    'current_value' => 'Текущее значение',
+    'target' => 'Цель',
+    'progress' => 'Прогресс',
+    
+    // Kanban Board
+    'no_deals' => 'Нет сделок',
+    'ai_score_label' => 'AI Оценка',
 ];
 

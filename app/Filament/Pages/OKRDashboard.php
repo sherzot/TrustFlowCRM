@@ -18,6 +18,16 @@ class OKRDashboard extends Page
 
     protected static ?string $navigationGroup = 'Analytics';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.okr_dashboard');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.analytics');
+    }
+
     public function getObjectives(): array
     {
         $tenantId = Auth::user()->tenant_id;
@@ -61,22 +71,26 @@ class OKRDashboard extends Page
         $projectsCompleted = $projectsQuery->count();
 
         return [
-            'deals_won' => [
+            __('filament.deals_won') => [
+                'key' => 'deals_won',
                 'current' => $dealsWon,
                 'target' => 20,
                 'percentage' => min(100, ($dealsWon / 20) * 100),
             ],
-            'deals_value' => [
+            __('filament.deals_value') => [
+                'key' => 'deals_value',
                 'current' => $dealsValue,
                 'target' => 500000,
                 'percentage' => min(100, ($dealsValue / 500000) * 100),
             ],
-            'revenue' => [
+            __('filament.revenue') => [
+                'key' => 'revenue',
                 'current' => $revenue,
                 'target' => 1000000,
                 'percentage' => min(100, ($revenue / 1000000) * 100),
             ],
-            'projects_completed' => [
+            __('filament.projects_completed') => [
+                'key' => 'projects_completed',
                 'current' => $projectsCompleted,
                 'target' => 15,
                 'percentage' => min(100, ($projectsCompleted / 15) * 100),

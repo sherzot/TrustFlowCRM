@@ -125,5 +125,38 @@ return [
     'social_media' => 'Social Media',
     'email_campaign' => 'Email Campaign',
     'other' => 'Other',
+    
+    // Pages
+    'dashboard' => 'Dashboard',
+    'kanban_board' => 'Kanban Board',
+    'system_health' => 'System Health',
+    'okr_dashboard' => 'OKR Dashboard',
+    'analytics' => 'Analytics',
+    
+    // System Health
+    'database' => 'Database',
+    'cache' => 'Cache',
+    'queue' => 'Queue',
+    'storage' => 'Storage',
+    'healthy' => 'Healthy',
+    'unhealthy' => 'Unhealthy',
+    'warning' => 'Warning',
+    'database_connection_successful' => 'Database connection successful',
+    'cache_is_working' => 'Cache is working',
+    'queue_size' => 'Queue size',
+    'storage_used' => 'Storage used',
+    
+    // OKR Dashboard
+    'deals_won' => 'Deals Won',
+    'deals_value' => 'Deals Value',
+    'revenue' => 'Revenue',
+    'projects_completed' => 'Projects Completed',
+    'current_value' => 'Current Value',
+    'target' => 'Target',
+    'progress' => 'Progress',
+    
+    // Kanban Board
+    'no_deals' => 'No deals',
+    'ai_score_label' => 'AI Score',
 ];
 

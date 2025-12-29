@@ -16,10 +16,13 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Super Admin',
                 'password' => Hash::make('password'),
+                'tenant_id' => null,
                 'role' => 'super_admin',
             ]
         );
-        $superAdmin->assignRole('super_admin');
+        if (!$superAdmin->hasRole('super_admin')) {
+            $superAdmin->assignRole('super_admin');
+        }
 
         // Demo Tenant Admin
         $admin = User::firstOrCreate(
@@ -31,7 +34,9 @@ class UserSeeder extends Seeder
                 'role' => 'admin',
             ]
         );
-        $admin->assignRole('admin');
+        if (!$admin->hasRole('admin')) {
+            $admin->assignRole('admin');
+        }
     }
 }
 

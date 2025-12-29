@@ -10,9 +10,8 @@ class TenantSeeder extends Seeder
     public function run(): void
     {
         Tenant::firstOrCreate(
-            ['id' => 'demo'],
+            ['name' => 'Demo Agency'],
             [
-                'name' => 'Demo Agency',
                 'plan' => 'enterprise',
                 'status' => 'active',
             ]

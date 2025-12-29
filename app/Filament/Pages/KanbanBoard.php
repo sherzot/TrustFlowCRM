@@ -18,17 +18,27 @@ class KanbanBoard extends Page
 
     protected static ?int $navigationSort = 2;
 
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.kanban_board');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.sales');
+    }
+
     public function getDealsByStage(): array
     {
         $tenantId = Auth::user()->tenant_id;
         
         $stages = [
-            'new' => 'New',
-            'qualified' => 'Qualified',
-            'discovery' => 'Discovery',
-            'proposal' => 'Proposal',
-            'negotiation' => 'Negotiation',
-            'won' => 'Won',
+            'new' => __('filament.new'),
+            'qualified' => __('filament.qualified'),
+            'discovery' => __('filament.discovery'),
+            'proposal' => __('filament.proposal'),
+            'negotiation' => __('filament.negotiation'),
+            'won' => __('filament.won'),
         ];
 
         $dealsByStage = [];

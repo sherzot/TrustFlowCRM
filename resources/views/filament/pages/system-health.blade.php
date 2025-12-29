@@ -5,14 +5,14 @@
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="font-semibold text-lg text-gray-900 dark:text-gray-100 capitalize">
-                            {{ $component }}
+                            {{ __('filament.' . $component) }}
                         </h3>
                         <span
                             class="px-3 py-1 rounded-full text-xs font-semibold
                             @if ($metric['status'] === 'healthy') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
                             @elseif($metric['status'] === 'warning') bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
                             @else bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 @endif">
-                            {{ ucfirst($metric['status']) }}
+                            {{ __('filament.' . $metric['status']) }}
                         </span>
                     </div>
                     <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -29,7 +29,7 @@
                                     clip-rule="evenodd" />
                             </svg>
                             <span class="text-sm text-gray-700 dark:text-gray-300">
-                                データベース接続が正常です
+                                {{ __('filament.database_connection_successful') }}
                             </span>
                         </div>
                     @endif

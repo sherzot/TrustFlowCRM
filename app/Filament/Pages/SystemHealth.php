@@ -17,6 +17,16 @@ class SystemHealth extends Page
 
     protected static ?string $navigationGroup = 'System';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.system_health');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.system');
+    }
+
     public function getHealthMetrics(): array
     {
         return [
@@ -31,7 +41,7 @@ class SystemHealth extends Page
     {
         try {
             DB::connection()->getPdo();
-            return ['status' => 'healthy', 'message' => 'Database connection successful'];
+            return ['status' => 'healthy', 'message' => __('filament.database_connection_successful')];
         } catch (\Exception $e) {
             return ['status' => 'unhealthy', 'message' => $e->getMessage()];
         }
@@ -42,7 +52,7 @@ class SystemHealth extends Page
         try {
             Cache::put('health_check', 'ok', 10);
             $value = Cache::get('health_check');
-            return ['status' => $value === 'ok' ? 'healthy' : 'unhealthy', 'message' => 'Cache is working'];
+            return ['status' => $value === 'ok' ? 'healthy' : 'unhealthy', 'message' => __('filament.cache_is_working')];
         } catch (\Exception $e) {
             return ['status' => 'unhealthy', 'message' => $e->getMessage()];
         }
@@ -52,7 +62,7 @@ class SystemHealth extends Page
     {
         try {
             $size = Queue::size();
-            return ['status' => 'healthy', 'message' => "Queue size: {$size}"];
+            return ['status' => 'healthy', 'message' => __('filament.queue_size') . ': ' . $size];
         } catch (\Exception $e) {
             return ['status' => 'unhealthy', 'message' => $e->getMessage()];
         }
@@ -68,7 +78,7 @@ class SystemHealth extends Page
 
             return [
                 'status' => $percentage > 90 ? 'warning' : 'healthy',
-                'message' => sprintf('Storage: %.1f%% used', $percentage),
+                'message' => __('filament.storage_used') . ': ' . sprintf('%.1f%%', $percentage),
             ];
         } catch (\Exception $e) {
             return ['status' => 'unhealthy', 'message' => $e->getMessage()];

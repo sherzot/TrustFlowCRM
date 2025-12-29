@@ -125,5 +125,38 @@ return [
     'social_media' => 'ソーシャルメディア',
     'email_campaign' => 'メールキャンペーン',
     'other' => 'その他',
+    
+    // Pages
+    'dashboard' => 'ダッシュボード',
+    'kanban_board' => 'かんばんボード',
+    'system_health' => 'システムヘルス',
+    'okr_dashboard' => 'OKRダッシュボード',
+    'analytics' => '分析',
+    
+    // System Health
+    'database' => 'データベース',
+    'cache' => 'キャッシュ',
+    'queue' => 'キュー',
+    'storage' => 'ストレージ',
+    'healthy' => '正常',
+    'unhealthy' => '異常',
+    'warning' => '警告',
+    'database_connection_successful' => 'データベース接続が正常です',
+    'cache_is_working' => 'キャッシュは動作しています',
+    'queue_size' => 'キューサイズ',
+    'storage_used' => 'ストレージ使用率',
+    
+    // OKR Dashboard
+    'deals_won' => '獲得した取引',
+    'deals_value' => '取引価値',
+    'revenue' => '収益',
+    'projects_completed' => '完了したプロジェクト',
+    'current_value' => '現在の値',
+    'target' => '目標',
+    'progress' => '進捗',
+    
+    // Kanban Board
+    'no_deals' => '取引なし',
+    'ai_score_label' => 'AIスコア',
 ];
 
