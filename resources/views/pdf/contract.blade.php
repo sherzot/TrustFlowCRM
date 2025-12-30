@@ -60,6 +60,15 @@
         }
         @endif
         
+        {{-- Har doim barcha heading elementlar uchun font-family --}}
+        h1, h2, h3, h4, h5, h6 {
+            @if($locale === 'ja' || $hasJapanese)
+            font-family: 'Noto Sans JP', 'DejaVu Sans', 'DejaVu Sans Unicode', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'MS PGothic', sans-serif !important;
+            @else
+            font-family: 'DejaVu Sans', 'DejaVu Sans Unicode', sans-serif !important;
+            @endif
+        }
+        
         body {
             font-size: 12px;
             line-height: 1.6;
@@ -76,10 +85,11 @@
             color: #f59e0b;
             margin: 0;
             font-size: 24px;
+            @if($locale === 'ja' || $hasJapanese)
             font-family: 'Noto Sans JP', 'DejaVu Sans', 'DejaVu Sans Unicode', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'MS PGothic', sans-serif !important;
-        }
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Noto Sans JP', 'DejaVu Sans', 'DejaVu Sans Unicode', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'MS PGothic', sans-serif !important;
+            @else
+            font-family: 'DejaVu Sans', 'DejaVu Sans Unicode', sans-serif !important;
+            @endif
         }
         .contract-info {
             margin-bottom: 30px;
