@@ -33,10 +33,11 @@ class ContractPdfController extends Controller
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
 
-        // Yapon tili uchun maxsus font
-        $defaultFont = $locale === 'ja' ? 'noto sans jp' : 'dejavu sans';
+        // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
+        $defaultFont = PdfHelper::getFontForLocale($locale, $contract);
+        $hasJapanese = PdfHelper::modelHasJapaneseCharacters($contract);
 
-        $pdf = Pdf::loadView('pdf.contract', compact('contract'))
+        $pdf = Pdf::loadView('pdf.contract', compact('contract', 'hasJapanese'))
             ->setPaper('a4', 'portrait')
             ->setOption('enable-font-subsetting', true)
             ->setOption('isRemoteEnabled', true)
@@ -70,10 +71,11 @@ class ContractPdfController extends Controller
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
 
-        // Yapon tili uchun maxsus font
-        $defaultFont = $locale === 'ja' ? 'noto sans jp' : 'dejavu sans';
+        // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
+        $defaultFont = PdfHelper::getFontForLocale($locale, $contract);
+        $hasJapanese = PdfHelper::modelHasJapaneseCharacters($contract);
 
-        $pdf = Pdf::loadView('pdf.contract', compact('contract'))
+        $pdf = Pdf::loadView('pdf.contract', compact('contract', 'hasJapanese'))
             ->setPaper('a4', 'portrait')
             ->setOption('enable-font-subsetting', true)
             ->setOption('isRemoteEnabled', true)
