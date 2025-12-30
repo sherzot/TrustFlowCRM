@@ -199,62 +199,62 @@
 </head>
 <body>
     <div class="header">
-        <h1>{!! htmlspecialchars($translations['project'], ENT_QUOTES, 'UTF-8') !!}</h1>
+        <h1>{{ $translations['project'] }}</h1>
     </div>
 
     <div class="project-info">
         <div class="info-row">
-            <div class="info-label">{!! htmlspecialchars($translations['name'], ENT_QUOTES, 'UTF-8') !!}:</div>
+            <div class="info-label">{{ $translations['name'] }}:</div>
             <div class="info-value">{{ $project->name }}</div>
         </div>
         <div class="info-row">
-            <div class="info-label">{!! htmlspecialchars($translations['account'], ENT_QUOTES, 'UTF-8') !!}:</div>
+            <div class="info-label">{{ $translations['account'] }}:</div>
             <div class="info-value">{{ $project->account->name }}</div>
         </div>
         @if($project->deal)
         <div class="info-row">
-            <div class="info-label">{!! htmlspecialchars($translations['deal'], ENT_QUOTES, 'UTF-8') !!}:</div>
+            <div class="info-label">{{ $translations['deal'] }}:</div>
             <div class="info-value">{{ $project->deal->name }}</div>
         </div>
         @endif
         <div class="info-row">
-            <div class="info-label">{!! htmlspecialchars($translations['status'], ENT_QUOTES, 'UTF-8') !!}:</div>
+            <div class="info-label">{{ $translations['status'] }}:</div>
             <div class="info-value">{{ __('filament.' . $project->status) }}</div>
         </div>
         <div class="info-row">
-            <div class="info-label">{!! htmlspecialchars($translations['start_date'], ENT_QUOTES, 'UTF-8') !!}:</div>
+            <div class="info-label">{{ $translations['start_date'] }}:</div>
             <div class="info-value">{{ \App\Helpers\DateHelper::formatDate($project->start_date) }}</div>
         </div>
         @if($project->end_date)
         <div class="info-row">
-            <div class="info-label">{!! htmlspecialchars($translations['end_date'], ENT_QUOTES, 'UTF-8') !!}:</div>
+            <div class="info-label">{{ $translations['end_date'] }}:</div>
             <div class="info-value">{{ \App\Helpers\DateHelper::formatDate($project->end_date) }}</div>
         </div>
         @endif
     </div>
 
     <div class="section">
-        <h2>{!! htmlspecialchars($translations['description'], ENT_QUOTES, 'UTF-8') !!}</h2>
+        <h2>{{ $translations['description'] }}</h2>
         <p>{{ $project->description ?? $translations['no_description'] }}</p>
     </div>
 
     <div class="section">
-        <h2>{!! htmlspecialchars($translations['project_statistics'], ENT_QUOTES, 'UTF-8') !!}</h2>
+        <h2>{{ $translations['project_statistics'] }}</h2>
         <div class="stats-grid">
             <div class="stat-box">
-                <div class="stat-label">{!! htmlspecialchars($translations['budget'], ENT_QUOTES, 'UTF-8') !!}</div>
+                <div class="stat-label">{{ $translations['budget'] }}</div>
                 <div class="stat-value">{{ number_format($project->budget ?? 0, 2) }} {{ $project->currency ?? 'USD' }}</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">{!! htmlspecialchars($translations['actual_cost'], ENT_QUOTES, 'UTF-8') !!}</div>
+                <div class="stat-label">{{ $translations['actual_cost'] }}</div>
                 <div class="stat-value">{{ number_format($project->actual_cost ?? 0, 2) }} {{ $project->currency ?? 'USD' }}</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">{!! htmlspecialchars($translations['profit'], ENT_QUOTES, 'UTF-8') !!}</div>
+                <div class="stat-label">{{ $translations['profit'] }}</div>
                 <div class="stat-value">{{ number_format($project->profit ?? 0, 2) }} {{ $project->currency ?? 'USD' }}</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">{!! htmlspecialchars($translations['progress'], ENT_QUOTES, 'UTF-8') !!}</div>
+                <div class="stat-label">{{ $translations['progress'] }}</div>
                 <div class="stat-value">{{ $project->progress ?? 0 }}%</div>
             </div>
         </div>
@@ -262,14 +262,14 @@
 
     @if($project->tasks->count() > 0)
     <div class="section">
-        <h2>{!! htmlspecialchars($translations['tasks'], ENT_QUOTES, 'UTF-8') !!} ({{ $project->tasks->count() }})</h2>
+        <h2>{{ $translations['tasks'] }} ({{ $project->tasks->count() }})</h2>
         <table class="tasks-table">
             <thead>
                 <tr>
-                    <th>{!! htmlspecialchars($translations['title'], ENT_QUOTES, 'UTF-8') !!}</th>
-                    <th>{!! htmlspecialchars($translations['status'], ENT_QUOTES, 'UTF-8') !!}</th>
-                    <th>{!! htmlspecialchars($translations['priority'], ENT_QUOTES, 'UTF-8') !!}</th>
-                    <th>{!! htmlspecialchars($translations['due_date'], ENT_QUOTES, 'UTF-8') !!}</th>
+                    <th>{{ $translations['title'] }}</th>
+                    <th>{{ $translations['status'] }}</th>
+                    <th>{{ $translations['priority'] }}</th>
+                    <th>{{ $translations['due_date'] }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -287,8 +287,8 @@
     @endif
 
     <div class="footer">
-        <p>{!! htmlspecialchars($translations['generated_at'], ENT_QUOTES, 'UTF-8') !!}: {{ \App\Helpers\DateHelper::formatDateTime(now()) }}</p>
-        <p>{{ config('app.name') }} - {!! htmlspecialchars($translations['project_report'], ENT_QUOTES, 'UTF-8') !!}</p>
+        <p>{{ $translations['generated_at'] }}: {{ \App\Helpers\DateHelper::formatDateTime(now()) }}</p>
+        <p>{{ config('app.name') }} - {{ $translations['project_report'] }}</p>
     </div>
 </body>
 </html>
