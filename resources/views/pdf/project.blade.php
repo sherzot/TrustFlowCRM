@@ -16,28 +16,28 @@
             // Matn ichida Yaponcha belgilar bor-yo'qligini tekshirish
             $hasJapanese = $hasJapanese ?? \App\Helpers\PdfHelper::modelHasJapaneseCharacters($project);
             
-            // Translation key'larni oldindan yuklash
+            // Translation key'larni oldindan yuklash va UTF-8 encoding bilan ishlatish
             $translations = [
-                'project' => __('filament.project'),
-                'name' => __('filament.name'),
-                'account' => __('filament.account'),
-                'deal' => __('filament.deal'),
-                'status' => __('filament.status'),
-                'start_date' => __('filament.start_date'),
-                'end_date' => __('filament.end_date'),
-                'description' => __('filament.description'),
-                'project_statistics' => __('filament.project_statistics'),
-                'budget' => __('filament.budget'),
-                'actual_cost' => __('filament.actual_cost'),
-                'profit' => __('filament.profit'),
-                'progress' => __('filament.progress'),
-                'tasks' => __('filament.tasks'),
-                'title' => __('filament.title'),
-                'priority' => __('filament.priority'),
-                'due_date' => __('filament.due_date'),
-                'no_description' => __('filament.no_description'),
-                'generated_at' => __('filament.generated_at'),
-                'project_report' => __('filament.project_report'),
+                'project' => mb_convert_encoding(__('filament.project'), 'UTF-8', 'UTF-8'),
+                'name' => mb_convert_encoding(__('filament.name'), 'UTF-8', 'UTF-8'),
+                'account' => mb_convert_encoding(__('filament.account'), 'UTF-8', 'UTF-8'),
+                'deal' => mb_convert_encoding(__('filament.deal'), 'UTF-8', 'UTF-8'),
+                'status' => mb_convert_encoding(__('filament.status'), 'UTF-8', 'UTF-8'),
+                'start_date' => mb_convert_encoding(__('filament.start_date'), 'UTF-8', 'UTF-8'),
+                'end_date' => mb_convert_encoding(__('filament.end_date'), 'UTF-8', 'UTF-8'),
+                'description' => mb_convert_encoding(__('filament.description'), 'UTF-8', 'UTF-8'),
+                'project_statistics' => mb_convert_encoding(__('filament.project_statistics'), 'UTF-8', 'UTF-8'),
+                'budget' => mb_convert_encoding(__('filament.budget'), 'UTF-8', 'UTF-8'),
+                'actual_cost' => mb_convert_encoding(__('filament.actual_cost'), 'UTF-8', 'UTF-8'),
+                'profit' => mb_convert_encoding(__('filament.profit'), 'UTF-8', 'UTF-8'),
+                'progress' => mb_convert_encoding(__('filament.progress'), 'UTF-8', 'UTF-8'),
+                'tasks' => mb_convert_encoding(__('filament.tasks'), 'UTF-8', 'UTF-8'),
+                'title' => mb_convert_encoding(__('filament.title'), 'UTF-8', 'UTF-8'),
+                'priority' => mb_convert_encoding(__('filament.priority'), 'UTF-8', 'UTF-8'),
+                'due_date' => mb_convert_encoding(__('filament.due_date'), 'UTF-8', 'UTF-8'),
+                'no_description' => mb_convert_encoding(__('filament.no_description'), 'UTF-8', 'UTF-8'),
+                'generated_at' => mb_convert_encoding(__('filament.generated_at'), 'UTF-8', 'UTF-8'),
+                'project_report' => mb_convert_encoding(__('filament.project_report'), 'UTF-8', 'UTF-8'),
             ];
         @endphp
         

@@ -35,7 +35,7 @@ class ContractPdfController extends Controller
 
         // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
-        
+
         // Translation'lar avtomatik yuklanadi, cache'ni tozalash shart emas
         // Laravel 11'da translation'lar har safar yangi locale bilan yuklanadi
 
@@ -55,7 +55,9 @@ class ContractPdfController extends Controller
             ->setOption('defaultFont', $pdfDefaultFont)
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', false)
-            ->setOption('chroot', realpath(base_path()));
+            ->setOption('chroot', realpath(base_path()))
+            ->setOption('isUnicode', true)
+            ->setOption('enableCssFloat', true);
 
         return $pdf->stream("contract-{$contract->contract_number}.pdf");
     }
@@ -84,7 +86,7 @@ class ContractPdfController extends Controller
 
         // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
-        
+
         // Translation'lar avtomatik yuklanadi, cache'ni tozalash shart emas
         // Laravel 11'da translation'lar har safar yangi locale bilan yuklanadi
 
@@ -104,7 +106,9 @@ class ContractPdfController extends Controller
             ->setOption('defaultFont', $pdfDefaultFont)
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', false)
-            ->setOption('chroot', realpath(base_path()));
+            ->setOption('chroot', realpath(base_path()))
+            ->setOption('isUnicode', true)
+            ->setOption('enableCssFloat', true);
 
         return $pdf->download("contract-{$contract->contract_number}.pdf");
     }

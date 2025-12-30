@@ -55,7 +55,9 @@ class ProjectPdfController extends Controller
             ->setOption('defaultFont', $pdfDefaultFont)
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', false)
-            ->setOption('chroot', realpath(base_path()));
+            ->setOption('chroot', realpath(base_path()))
+            ->setOption('isUnicode', true)
+            ->setOption('enableCssFloat', true);
 
         return $pdf->stream("project-{$project->id}.pdf");
     }
@@ -104,7 +106,9 @@ class ProjectPdfController extends Controller
             ->setOption('defaultFont', $pdfDefaultFont)
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', false)
-            ->setOption('chroot', realpath(base_path()));
+            ->setOption('chroot', realpath(base_path()))
+            ->setOption('isUnicode', true)
+            ->setOption('enableCssFloat', true);
 
         return $pdf->download("project-{$project->id}.pdf");
     }
