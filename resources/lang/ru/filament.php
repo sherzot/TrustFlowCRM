@@ -125,6 +125,7 @@ return [
     'save' => 'Сохранить',
     'cancel' => 'Отмена',
     'select_option' => 'Выбрать вариант',
+    'auto_generated' => 'Автоматически генерируется',
     
     // Additional Options
     'referral' => 'Реферал',

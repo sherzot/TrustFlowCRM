@@ -125,6 +125,7 @@ return [
     'save' => 'Save',
     'cancel' => 'Cancel',
     'select_option' => 'Select option',
+    'auto_generated' => 'Auto-generated',
     
     // Additional Options
     'referral' => 'Referral',

@@ -125,6 +125,7 @@ return [
     'save' => '保存',
     'cancel' => 'キャンセル',
     'select_option' => 'オプションを選択',
+    'auto_generated' => '自動生成',
 
     // Additional Options
     'referral' => '紹介',

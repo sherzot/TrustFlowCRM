@@ -128,6 +128,7 @@ return [
     'save' => 'Saqlash',
     'cancel' => 'Bekor qilish',
     'select_option' => 'Variantni tanlang',
+    'auto_generated' => 'Avtomatik yaratiladi',
     'actions' => 'Amallar',
     
     // Additional Options

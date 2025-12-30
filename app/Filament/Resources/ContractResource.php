@@ -71,8 +71,8 @@ class ContractResource extends Resource
                     ->placeholder(__('filament.select_option')),
                 Forms\Components\TextInput::make('contract_number')
                     ->label(__('filament.contract_number'))
-                    ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->placeholder(__('filament.auto_generated')),
                 Forms\Components\TextInput::make('title')
                     ->label(__('filament.title'))
                     ->required()
