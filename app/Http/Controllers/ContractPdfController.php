@@ -35,11 +35,9 @@ class ContractPdfController extends Controller
 
         // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
-
-        // Translation cache'ni tozalash
-        if (method_exists(app('translator'), 'getLoader')) {
-            app('translator')->getLoader()->flushCache();
-        }
+        
+        // Translation'lar avtomatik yuklanadi, cache'ni tozalash shart emas
+        // Laravel 11'da translation'lar har safar yangi locale bilan yuklanadi
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $contract);
@@ -86,11 +84,9 @@ class ContractPdfController extends Controller
 
         // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
-
-        // Translation cache'ni tozalash
-        if (method_exists(app('translator'), 'getLoader')) {
-            app('translator')->getLoader()->flushCache();
-        }
+        
+        // Translation'lar avtomatik yuklanadi, cache'ni tozalash shart emas
+        // Laravel 11'da translation'lar har safar yangi locale bilan yuklanadi
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $contract);
