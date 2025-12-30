@@ -32,12 +32,24 @@ class ContractPdfController extends Controller
         // Locale'ni o'rnatish (session'dan yoki request'dan)
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
-
-        // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
-
-        // Translation'lar avtomatik yuklanadi, cache'ni tozalash shart emas
-        // Laravel 11'da translation'lar har safar yangi locale bilan yuklanadi
+        
+        // Translation key'larni oldindan yuklash va UTF-8 encoding bilan ishlatish
+        $translations = [
+            'contract' => trans('filament.contract', [], $locale),
+            'contract_number' => trans('filament.contract_number', [], $locale),
+            'title' => trans('filament.title', [], $locale),
+            'account' => trans('filament.account', [], $locale),
+            'deal' => trans('filament.deal', [], $locale),
+            'project' => trans('filament.project', [], $locale),
+            'status' => trans('filament.status', [], $locale),
+            'signed_at' => trans('filament.signed_at', [], $locale),
+            'signed_by' => trans('filament.signed_by', [], $locale),
+            'content' => trans('filament.content', [], $locale),
+            'signature' => trans('filament.signature', [], $locale),
+            'generated_at' => trans('filament.generated_at', [], $locale),
+            'contract_document' => trans('filament.contract_document', [], $locale),
+        ];
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $contract);
@@ -48,7 +60,7 @@ class ContractPdfController extends Controller
         // CSS'da fallback fontlar ishlatiladi
         $pdfDefaultFont = ($locale === 'ja' || $hasJapanese) ? 'noto sans jp' : 'dejavu sans';
 
-        $pdf = Pdf::loadView('pdf.contract', compact('contract', 'hasJapanese', 'locale'))
+        $pdf = Pdf::loadView('pdf.contract', compact('contract', 'hasJapanese', 'locale', 'translations'))
             ->setPaper('a4', 'portrait')
             ->setOption('enable-font-subsetting', true)
             ->setOption('isRemoteEnabled', true)
@@ -83,12 +95,24 @@ class ContractPdfController extends Controller
         // Locale'ni o'rnatish (session'dan yoki request'dan)
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
-
-        // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
-
-        // Translation'lar avtomatik yuklanadi, cache'ni tozalash shart emas
-        // Laravel 11'da translation'lar har safar yangi locale bilan yuklanadi
+        
+        // Translation key'larni oldindan yuklash va UTF-8 encoding bilan ishlatish
+        $translations = [
+            'contract' => trans('filament.contract', [], $locale),
+            'contract_number' => trans('filament.contract_number', [], $locale),
+            'title' => trans('filament.title', [], $locale),
+            'account' => trans('filament.account', [], $locale),
+            'deal' => trans('filament.deal', [], $locale),
+            'project' => trans('filament.project', [], $locale),
+            'status' => trans('filament.status', [], $locale),
+            'signed_at' => trans('filament.signed_at', [], $locale),
+            'signed_by' => trans('filament.signed_by', [], $locale),
+            'content' => trans('filament.content', [], $locale),
+            'signature' => trans('filament.signature', [], $locale),
+            'generated_at' => trans('filament.generated_at', [], $locale),
+            'contract_document' => trans('filament.contract_document', [], $locale),
+        ];
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $contract);
@@ -99,7 +123,7 @@ class ContractPdfController extends Controller
         // CSS'da fallback fontlar ishlatiladi
         $pdfDefaultFont = ($locale === 'ja' || $hasJapanese) ? 'noto sans jp' : 'dejavu sans';
 
-        $pdf = Pdf::loadView('pdf.contract', compact('contract', 'hasJapanese', 'locale'))
+        $pdf = Pdf::loadView('pdf.contract', compact('contract', 'hasJapanese', 'locale', 'translations'))
             ->setPaper('a4', 'portrait')
             ->setOption('enable-font-subsetting', true)
             ->setOption('isRemoteEnabled', true)

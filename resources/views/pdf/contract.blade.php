@@ -16,22 +16,8 @@
             // Matn ichida Yaponcha belgilar bor-yo'qligini tekshirish
             $hasJapanese = $hasJapanese ?? \App\Helpers\PdfHelper::modelHasJapaneseCharacters($contract);
             
-            // Translation key'larni oldindan yuklash va UTF-8 encoding bilan ishlatish
-            $translations = [
-                'contract' => mb_convert_encoding(__('filament.contract'), 'UTF-8', 'UTF-8'),
-                'contract_number' => mb_convert_encoding(__('filament.contract_number'), 'UTF-8', 'UTF-8'),
-                'title' => mb_convert_encoding(__('filament.title'), 'UTF-8', 'UTF-8'),
-                'account' => mb_convert_encoding(__('filament.account'), 'UTF-8', 'UTF-8'),
-                'deal' => mb_convert_encoding(__('filament.deal'), 'UTF-8', 'UTF-8'),
-                'project' => mb_convert_encoding(__('filament.project'), 'UTF-8', 'UTF-8'),
-                'status' => mb_convert_encoding(__('filament.status'), 'UTF-8', 'UTF-8'),
-                'signed_at' => mb_convert_encoding(__('filament.signed_at'), 'UTF-8', 'UTF-8'),
-                'signed_by' => mb_convert_encoding(__('filament.signed_by'), 'UTF-8', 'UTF-8'),
-                'content' => mb_convert_encoding(__('filament.content'), 'UTF-8', 'UTF-8'),
-                'signature' => mb_convert_encoding(__('filament.signature'), 'UTF-8', 'UTF-8'),
-                'generated_at' => mb_convert_encoding(__('filament.generated_at'), 'UTF-8', 'UTF-8'),
-                'contract_document' => mb_convert_encoding(__('filament.contract_document'), 'UTF-8', 'UTF-8'),
-            ];
+            // Translation key'lar controllerdan keladi, bu yerda faqat tekshirish
+            // $translations variable controllerdan keladi
         @endphp
         
         {{-- Har doim ikkala fontni ham yuklash --}}

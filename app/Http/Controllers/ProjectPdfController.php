@@ -32,12 +32,31 @@ class ProjectPdfController extends Controller
         // Locale'ni o'rnatish (session'dan yoki request'dan)
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
-        
-        // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
         
-        // Translation'lar avtomatik yuklanadi, cache'ni tozalash shart emas
-        // Laravel 11'da translation'lar har safar yangi locale bilan yuklanadi
+        // Translation key'larni oldindan yuklash va UTF-8 encoding bilan ishlatish
+        $translations = [
+            'project' => trans('filament.project', [], $locale),
+            'name' => trans('filament.name', [], $locale),
+            'account' => trans('filament.account', [], $locale),
+            'deal' => trans('filament.deal', [], $locale),
+            'status' => trans('filament.status', [], $locale),
+            'start_date' => trans('filament.start_date', [], $locale),
+            'end_date' => trans('filament.end_date', [], $locale),
+            'description' => trans('filament.description', [], $locale),
+            'project_statistics' => trans('filament.project_statistics', [], $locale),
+            'budget' => trans('filament.budget', [], $locale),
+            'actual_cost' => trans('filament.actual_cost', [], $locale),
+            'profit' => trans('filament.profit', [], $locale),
+            'progress' => trans('filament.progress', [], $locale),
+            'tasks' => trans('filament.tasks', [], $locale),
+            'title' => trans('filament.title', [], $locale),
+            'priority' => trans('filament.priority', [], $locale),
+            'due_date' => trans('filament.due_date', [], $locale),
+            'no_description' => trans('filament.no_description', [], $locale),
+            'generated_at' => trans('filament.generated_at', [], $locale),
+            'project_report' => trans('filament.project_report', [], $locale),
+        ];
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $project);
@@ -48,7 +67,7 @@ class ProjectPdfController extends Controller
         // CSS'da fallback fontlar ishlatiladi
         $pdfDefaultFont = ($locale === 'ja' || $hasJapanese) ? 'noto sans jp' : 'dejavu sans';
 
-        $pdf = Pdf::loadView('pdf.project', compact('project', 'hasJapanese', 'locale'))
+        $pdf = Pdf::loadView('pdf.project', compact('project', 'hasJapanese', 'locale', 'translations'))
             ->setPaper('a4', 'portrait')
             ->setOption('enable-font-subsetting', true)
             ->setOption('isRemoteEnabled', true)
@@ -83,12 +102,31 @@ class ProjectPdfController extends Controller
         // Locale'ni o'rnatish (session'dan yoki request'dan)
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
-        
-        // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
         
-        // Translation'lar avtomatik yuklanadi, cache'ni tozalash shart emas
-        // Laravel 11'da translation'lar har safar yangi locale bilan yuklanadi
+        // Translation key'larni oldindan yuklash va UTF-8 encoding bilan ishlatish
+        $translations = [
+            'project' => trans('filament.project', [], $locale),
+            'name' => trans('filament.name', [], $locale),
+            'account' => trans('filament.account', [], $locale),
+            'deal' => trans('filament.deal', [], $locale),
+            'status' => trans('filament.status', [], $locale),
+            'start_date' => trans('filament.start_date', [], $locale),
+            'end_date' => trans('filament.end_date', [], $locale),
+            'description' => trans('filament.description', [], $locale),
+            'project_statistics' => trans('filament.project_statistics', [], $locale),
+            'budget' => trans('filament.budget', [], $locale),
+            'actual_cost' => trans('filament.actual_cost', [], $locale),
+            'profit' => trans('filament.profit', [], $locale),
+            'progress' => trans('filament.progress', [], $locale),
+            'tasks' => trans('filament.tasks', [], $locale),
+            'title' => trans('filament.title', [], $locale),
+            'priority' => trans('filament.priority', [], $locale),
+            'due_date' => trans('filament.due_date', [], $locale),
+            'no_description' => trans('filament.no_description', [], $locale),
+            'generated_at' => trans('filament.generated_at', [], $locale),
+            'project_report' => trans('filament.project_report', [], $locale),
+        ];
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $project);
@@ -99,7 +137,7 @@ class ProjectPdfController extends Controller
         // CSS'da fallback fontlar ishlatiladi
         $pdfDefaultFont = ($locale === 'ja' || $hasJapanese) ? 'noto sans jp' : 'dejavu sans';
 
-        $pdf = Pdf::loadView('pdf.project', compact('project', 'hasJapanese', 'locale'))
+        $pdf = Pdf::loadView('pdf.project', compact('project', 'hasJapanese', 'locale', 'translations'))
             ->setPaper('a4', 'portrait')
             ->setOption('enable-font-subsetting', true)
             ->setOption('isRemoteEnabled', true)
