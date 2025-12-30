@@ -7,9 +7,11 @@
     <style>
         @php
             $locale = app()->getLocale();
+            // Matn ichida Yaponcha belgilar bor-yo'qligini tekshirish
+            $hasJapanese = $hasJapanese ?? \App\Helpers\PdfHelper::modelHasJapaneseCharacters($contract);
         @endphp
         
-        @if($locale === 'ja')
+        @if($locale === 'ja' || $hasJapanese)
         {{-- Yapon tili uchun Noto Sans JP font --}}
         @font-face {
             font-family: 'Noto Sans JP';

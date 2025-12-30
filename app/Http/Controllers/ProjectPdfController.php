@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Helpers\PermissionHelper;
+use App\Helpers\PdfHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -32,13 +33,18 @@ class ProjectPdfController extends Controller
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
 
-        $pdf = Pdf::loadView('pdf.project', compact('project'))
+        // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
+        $defaultFont = PdfHelper::getFontForLocale($locale, $project);
+        $hasJapanese = PdfHelper::modelHasJapaneseCharacters($project);
+
+        $pdf = Pdf::loadView('pdf.project', compact('project', 'hasJapanese'))
             ->setPaper('a4', 'portrait')
             ->setOption('enable-font-subsetting', true)
             ->setOption('isRemoteEnabled', true)
-            ->setOption('defaultFont', 'dejavu sans')
+            ->setOption('defaultFont', $defaultFont)
             ->setOption('isHtml5ParserEnabled', true)
-            ->setOption('isPhpEnabled', false);
+            ->setOption('isPhpEnabled', false)
+            ->setOption('chroot', realpath(base_path()));
 
         return $pdf->stream("project-{$project->id}.pdf");
     }
@@ -65,13 +71,18 @@ class ProjectPdfController extends Controller
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
 
-        $pdf = Pdf::loadView('pdf.project', compact('project'))
+        // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
+        $defaultFont = PdfHelper::getFontForLocale($locale, $project);
+        $hasJapanese = PdfHelper::modelHasJapaneseCharacters($project);
+
+        $pdf = Pdf::loadView('pdf.project', compact('project', 'hasJapanese'))
             ->setPaper('a4', 'portrait')
             ->setOption('enable-font-subsetting', true)
             ->setOption('isRemoteEnabled', true)
-            ->setOption('defaultFont', 'dejavu sans')
+            ->setOption('defaultFont', $defaultFont)
             ->setOption('isHtml5ParserEnabled', true)
-            ->setOption('isPhpEnabled', false);
+            ->setOption('isPhpEnabled', false)
+            ->setOption('chroot', realpath(base_path()));
 
         return $pdf->download("project-{$project->id}.pdf");
     }

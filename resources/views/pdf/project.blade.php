@@ -7,7 +7,32 @@
     <style>
         @php
             $locale = app()->getLocale();
+            // Matn ichida Yaponcha belgilar bor-yo'qligini tekshirish
+            $hasJapanese = $hasJapanese ?? \App\Helpers\PdfHelper::modelHasJapaneseCharacters($project);
         @endphp
+        
+        @if($locale === 'ja' || $hasJapanese)
+        {{-- Yapon tili uchun Noto Sans JP font --}}
+        @font-face {
+            font-family: 'Noto Sans JP';
+            font-style: normal;
+            font-weight: normal;
+            src: url('https://fonts.gstatic.com/s/notosansjp/v52/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFBEj75s.ttf') format('truetype');
+        }
+        @font-face {
+            font-family: 'Noto Sans JP';
+            font-style: normal;
+            font-weight: bold;
+            src: url('https://fonts.gstatic.com/s/notosansjp/v52/-F6kfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFBEj75s.ttf') format('truetype');
+        }
+        * {
+            font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'MS PGothic', sans-serif !important;
+        }
+        body {
+            font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'MS PGothic', sans-serif;
+        }
+        @else
+        {{-- Boshqa tillar uchun DejaVu Sans --}}
         @font-face {
             font-family: 'DejaVu Sans';
             font-style: normal;
@@ -25,6 +50,10 @@
         }
         body {
             font-family: 'DejaVu Sans', 'DejaVu Sans Unicode', sans-serif;
+        }
+        @endif
+        
+        body {
             font-size: 12px;
             line-height: 1.6;
             color: #333;
@@ -210,4 +239,3 @@
     </div>
 </body>
 </html>
-

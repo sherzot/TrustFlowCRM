@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\App;
 use App\Models\Contract;
 use App\Helpers\PermissionHelper;
+use App\Helpers\PdfHelper;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -32,13 +33,17 @@ class ContractPdfController extends Controller
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
 
+        // Yapon tili uchun maxsus font
+        $defaultFont = $locale === 'ja' ? 'noto sans jp' : 'dejavu sans';
+
         $pdf = Pdf::loadView('pdf.contract', compact('contract'))
             ->setPaper('a4', 'portrait')
             ->setOption('enable-font-subsetting', true)
             ->setOption('isRemoteEnabled', true)
-            ->setOption('defaultFont', 'dejavu sans')
+            ->setOption('defaultFont', $defaultFont)
             ->setOption('isHtml5ParserEnabled', true)
-            ->setOption('isPhpEnabled', false);
+            ->setOption('isPhpEnabled', false)
+            ->setOption('chroot', realpath(base_path()));
 
         return $pdf->stream("contract-{$contract->contract_number}.pdf");
     }
@@ -65,15 +70,18 @@ class ContractPdfController extends Controller
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
 
+        // Yapon tili uchun maxsus font
+        $defaultFont = $locale === 'ja' ? 'noto sans jp' : 'dejavu sans';
+
         $pdf = Pdf::loadView('pdf.contract', compact('contract'))
             ->setPaper('a4', 'portrait')
             ->setOption('enable-font-subsetting', true)
             ->setOption('isRemoteEnabled', true)
-            ->setOption('defaultFont', 'dejavu sans')
+            ->setOption('defaultFont', $defaultFont)
             ->setOption('isHtml5ParserEnabled', true)
-            ->setOption('isPhpEnabled', false);
+            ->setOption('isPhpEnabled', false)
+            ->setOption('chroot', realpath(base_path()));
 
         return $pdf->download("contract-{$contract->contract_number}.pdf");
     }
 }
-
