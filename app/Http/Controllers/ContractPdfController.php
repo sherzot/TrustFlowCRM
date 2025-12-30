@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\App;
 use App\Models\Contract;
 use App\Helpers\PermissionHelper;
 use Illuminate\Http\Request;
