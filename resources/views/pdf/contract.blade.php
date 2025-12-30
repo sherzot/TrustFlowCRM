@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ __('filament.contract') }} - {{ $contract->contract_number }}</title>
     <style>
-        @php
-            $locale = app()->getLocale();
-            // Har bir til uchun to'g'ri font
-            $fontFamily = match($locale) {
-                'ja' => 'dejavu sans', // Yapon tili uchun
-                'ru' => 'dejavu sans', // Rus tili uchun
-                'uz' => 'dejavu sans', // O'zbek tili uchun
-                default => 'dejavu sans', // Ingliz tili va default
-            };
-        @endphp
+        @font-face {
+            font-family: 'DejaVu Sans';
+            font-style: normal;
+            font-weight: normal;
+            src: url('{{ storage_path('fonts/DejaVuSans.ttf') }}') format('truetype');
+        }
+        @font-face {
+            font-family: 'DejaVu Sans';
+            font-style: normal;
+            font-weight: bold;
+            src: url('{{ storage_path('fonts/DejaVuSans-Bold.ttf') }}') format('truetype');
+        }
         * {
-            font-family: {{ $fontFamily }}, sans-serif !important;
+            font-family: 'DejaVu Sans', 'DejaVu Sans Unicode', sans-serif !important;
         }
         body {
-            font-family: {{ $fontFamily }}, sans-serif;
+            font-family: 'DejaVu Sans', 'DejaVu Sans Unicode', sans-serif;
             font-size: 12px;
             line-height: 1.6;
             color: #333;
@@ -113,7 +115,7 @@
         @if($contract->signed_at)
         <div class="info-row">
             <div class="info-label">{{ __('filament.signed_at') }}:</div>
-            <div class="info-value">{{ \App\Helpers\DateHelper::formatDateTime($contract->signed_at) }}</div>
+            <div class="info-value">{{ $contract->signed_at ? \App\Helpers\DateHelper::formatDateTime($contract->signed_at) : '-' }}</div>
         </div>
         @if($contract->signed_by)
         <div class="info-row">
@@ -129,7 +131,7 @@
         {!! $contract->content !!}
     </div>
 
-    @if($contract->status === 'signed' && $contract->signature_data)
+    @if($contract->status === 'signed' && isset($contract->signature_data) && $contract->signature_data)
     <div class="signature-section">
         <h3>{{ __('filament.signature') }}</h3>
         <div class="signature-box">
@@ -144,4 +146,3 @@
     </div>
 </body>
 </html>
-
