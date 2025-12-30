@@ -8,6 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Ehtiyot bo'lish: agar jadval allaqachon mavjud bo'lsa, yaratmaslik
+        if (Schema::hasTable('media')) {
+            return;
+        }
+
         Schema::create('media', function (Blueprint $table) {
             $table->id();
             $table->morphs('model');

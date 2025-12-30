@@ -17,6 +17,12 @@ class DemoDataSeeder extends Seeder
     {
         $tenantId = 1;
 
+        // Agar allaqachon demo ma'lumotlar bo'lsa, qayta yaratmaslik
+        if (Account::where('tenant_id', $tenantId)->exists()) {
+            $this->command->info('Demo data already exists. Skipping...');
+            return;
+        }
+
         // Accounts yaratish
         $accounts = Account::factory(10)->create([
             'tenant_id' => $tenantId,
