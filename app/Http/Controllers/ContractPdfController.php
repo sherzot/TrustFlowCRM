@@ -32,9 +32,14 @@ class ContractPdfController extends Controller
         // Locale'ni o'rnatish (session'dan yoki request'dan)
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
-
+        
         // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
+        
+        // Translation cache'ni tozalash
+        if (method_exists(app('translator'), 'getLoader')) {
+            app('translator')->getLoader()->flushCache();
+        }
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $contract);
@@ -78,9 +83,14 @@ class ContractPdfController extends Controller
         // Locale'ni o'rnatish (session'dan yoki request'dan)
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
-
+        
         // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
+        
+        // Translation cache'ni tozalash
+        if (method_exists(app('translator'), 'getLoader')) {
+            app('translator')->getLoader()->flushCache();
+        }
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $contract);

@@ -11,8 +11,30 @@
             app()->setLocale($locale);
             app('translator')->setLocale($locale);
             
+            // Translation cache'ni tozalash
+            if (method_exists(app('translator'), 'getLoader')) {
+                app('translator')->getLoader()->flushCache();
+            }
+            
             // Matn ichida Yaponcha belgilar bor-yo'qligini tekshirish
             $hasJapanese = $hasJapanese ?? \App\Helpers\PdfHelper::modelHasJapaneseCharacters($contract);
+            
+            // Translation key'larni oldindan yuklash
+            $translations = [
+                'contract' => __('filament.contract'),
+                'contract_number' => __('filament.contract_number'),
+                'title' => __('filament.title'),
+                'account' => __('filament.account'),
+                'deal' => __('filament.deal'),
+                'project' => __('filament.project'),
+                'status' => __('filament.status'),
+                'signed_at' => __('filament.signed_at'),
+                'signed_by' => __('filament.signed_by'),
+                'content' => __('filament.content'),
+                'signature' => __('filament.signature'),
+                'generated_at' => __('filament.generated_at'),
+                'contract_document' => __('filament.contract_document'),
+            ];
         @endphp
         
         {{-- Har doim ikkala fontni ham yuklash --}}
@@ -133,46 +155,46 @@
 </head>
 <body>
     <div class="header">
-        <h1>{{ __('filament.contract') }}</h1>
+        <h1>{!! htmlspecialchars($translations['contract'], ENT_QUOTES, 'UTF-8') !!}</h1>
     </div>
 
     <div class="contract-info">
         <div class="info-row">
-            <div class="info-label">{{ __('filament.contract_number') }}:</div>
+            <div class="info-label">{!! htmlspecialchars($translations['contract_number'], ENT_QUOTES, 'UTF-8') !!}:</div>
             <div class="info-value">{{ $contract->contract_number }}</div>
         </div>
         <div class="info-row">
-            <div class="info-label">{{ __('filament.title') }}:</div>
+            <div class="info-label">{!! htmlspecialchars($translations['title'], ENT_QUOTES, 'UTF-8') !!}:</div>
             <div class="info-value">{{ $contract->title }}</div>
         </div>
         <div class="info-row">
-            <div class="info-label">{{ __('filament.account') }}:</div>
+            <div class="info-label">{!! htmlspecialchars($translations['account'], ENT_QUOTES, 'UTF-8') !!}:</div>
             <div class="info-value">{{ $contract->account->name }}</div>
         </div>
         @if($contract->deal)
         <div class="info-row">
-            <div class="info-label">{{ __('filament.deal') }}:</div>
+            <div class="info-label">{!! htmlspecialchars($translations['deal'], ENT_QUOTES, 'UTF-8') !!}:</div>
             <div class="info-value">{{ $contract->deal->name }}</div>
         </div>
         @endif
         @if($contract->project)
         <div class="info-row">
-            <div class="info-label">{{ __('filament.project') }}:</div>
+            <div class="info-label">{!! htmlspecialchars($translations['project'], ENT_QUOTES, 'UTF-8') !!}:</div>
             <div class="info-value">{{ $contract->project->name }}</div>
         </div>
         @endif
         <div class="info-row">
-            <div class="info-label">{{ __('filament.status') }}:</div>
+            <div class="info-label">{!! htmlspecialchars($translations['status'], ENT_QUOTES, 'UTF-8') !!}:</div>
             <div class="info-value">{{ __('filament.' . $contract->status) }}</div>
         </div>
         @if($contract->signed_at)
         <div class="info-row">
-            <div class="info-label">{{ __('filament.signed_at') }}:</div>
+            <div class="info-label">{!! htmlspecialchars($translations['signed_at'], ENT_QUOTES, 'UTF-8') !!}:</div>
             <div class="info-value">{{ $contract->signed_at ? \App\Helpers\DateHelper::formatDateTime($contract->signed_at) : '-' }}</div>
         </div>
         @if($contract->signed_by)
         <div class="info-row">
-            <div class="info-label">{{ __('filament.signed_by') }}:</div>
+            <div class="info-label">{!! htmlspecialchars($translations['signed_by'], ENT_QUOTES, 'UTF-8') !!}:</div>
             <div class="info-value">{{ $contract->signed_by }}</div>
         </div>
         @endif
@@ -180,13 +202,13 @@
     </div>
 
     <div class="content">
-        <h2>{{ __('filament.content') }}</h2>
+        <h2>{!! htmlspecialchars($translations['content'], ENT_QUOTES, 'UTF-8') !!}</h2>
         {!! $contract->content !!}
     </div>
 
     @if($contract->status === 'signed' && isset($contract->signature_data) && $contract->signature_data)
     <div class="signature-section">
-        <h3>{{ __('filament.signature') }}</h3>
+        <h3>{!! htmlspecialchars($translations['signature'], ENT_QUOTES, 'UTF-8') !!}</h3>
         <div class="signature-box">
             <img src="data:image/png;base64,{{ $contract->signature_data }}" alt="Signature" style="max-width: 300px;" />
         </div>
@@ -194,8 +216,8 @@
     @endif
 
     <div class="footer">
-        <p>{{ __('filament.generated_at') }}: {{ \App\Helpers\DateHelper::formatDateTime(now()) }}</p>
-        <p>{{ config('app.name') }} - {{ __('filament.contract_document') }}</p>
+        <p>{!! htmlspecialchars($translations['generated_at'], ENT_QUOTES, 'UTF-8') !!}: {{ \App\Helpers\DateHelper::formatDateTime(now()) }}</p>
+        <p>{{ config('app.name') }} - {!! htmlspecialchars($translations['contract_document'], ENT_QUOTES, 'UTF-8') !!}</p>
     </div>
 </body>
 </html>

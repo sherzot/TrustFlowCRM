@@ -35,6 +35,11 @@ class ProjectPdfController extends Controller
         
         // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
+        
+        // Translation cache'ni tozalash
+        if (method_exists(app('translator'), 'getLoader')) {
+            app('translator')->getLoader()->flushCache();
+        }
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $project);
@@ -81,6 +86,11 @@ class ProjectPdfController extends Controller
         
         // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
+        
+        // Translation cache'ni tozalash
+        if (method_exists(app('translator'), 'getLoader')) {
+            app('translator')->getLoader()->flushCache();
+        }
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $project);

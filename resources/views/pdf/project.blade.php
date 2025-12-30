@@ -11,8 +11,37 @@
             app()->setLocale($locale);
             app('translator')->setLocale($locale);
             
+            // Translation cache'ni tozalash
+            if (method_exists(app('translator'), 'getLoader')) {
+                app('translator')->getLoader()->flushCache();
+            }
+            
             // Matn ichida Yaponcha belgilar bor-yo'qligini tekshirish
             $hasJapanese = $hasJapanese ?? \App\Helpers\PdfHelper::modelHasJapaneseCharacters($project);
+            
+            // Translation key'larni oldindan yuklash
+            $translations = [
+                'project' => __('filament.project'),
+                'name' => __('filament.name'),
+                'account' => __('filament.account'),
+                'deal' => __('filament.deal'),
+                'status' => __('filament.status'),
+                'start_date' => __('filament.start_date'),
+                'end_date' => __('filament.end_date'),
+                'description' => __('filament.description'),
+                'project_statistics' => __('filament.project_statistics'),
+                'budget' => __('filament.budget'),
+                'actual_cost' => __('filament.actual_cost'),
+                'profit' => __('filament.profit'),
+                'progress' => __('filament.progress'),
+                'tasks' => __('filament.tasks'),
+                'title' => __('filament.title'),
+                'priority' => __('filament.priority'),
+                'due_date' => __('filament.due_date'),
+                'no_description' => __('filament.no_description'),
+                'generated_at' => __('filament.generated_at'),
+                'project_report' => __('filament.project_report'),
+            ];
         @endphp
         
         {{-- Har doim ikkala fontni ham yuklash --}}
@@ -170,62 +199,62 @@
 </head>
 <body>
     <div class="header">
-        <h1>{{ __('filament.project') }}</h1>
+        <h1>{!! htmlspecialchars($translations['project'], ENT_QUOTES, 'UTF-8') !!}</h1>
     </div>
 
     <div class="project-info">
         <div class="info-row">
-            <div class="info-label">{{ __('filament.name') }}:</div>
+            <div class="info-label">{!! htmlspecialchars($translations['name'], ENT_QUOTES, 'UTF-8') !!}:</div>
             <div class="info-value">{{ $project->name }}</div>
         </div>
         <div class="info-row">
-            <div class="info-label">{{ __('filament.account') }}:</div>
+            <div class="info-label">{!! htmlspecialchars($translations['account'], ENT_QUOTES, 'UTF-8') !!}:</div>
             <div class="info-value">{{ $project->account->name }}</div>
         </div>
         @if($project->deal)
         <div class="info-row">
-            <div class="info-label">{{ __('filament.deal') }}:</div>
+            <div class="info-label">{!! htmlspecialchars($translations['deal'], ENT_QUOTES, 'UTF-8') !!}:</div>
             <div class="info-value">{{ $project->deal->name }}</div>
         </div>
         @endif
         <div class="info-row">
-            <div class="info-label">{{ __('filament.status') }}:</div>
+            <div class="info-label">{!! htmlspecialchars($translations['status'], ENT_QUOTES, 'UTF-8') !!}:</div>
             <div class="info-value">{{ __('filament.' . $project->status) }}</div>
         </div>
         <div class="info-row">
-            <div class="info-label">{{ __('filament.start_date') }}:</div>
+            <div class="info-label">{!! htmlspecialchars($translations['start_date'], ENT_QUOTES, 'UTF-8') !!}:</div>
             <div class="info-value">{{ \App\Helpers\DateHelper::formatDate($project->start_date) }}</div>
         </div>
         @if($project->end_date)
         <div class="info-row">
-            <div class="info-label">{{ __('filament.end_date') }}:</div>
+            <div class="info-label">{!! htmlspecialchars($translations['end_date'], ENT_QUOTES, 'UTF-8') !!}:</div>
             <div class="info-value">{{ \App\Helpers\DateHelper::formatDate($project->end_date) }}</div>
         </div>
         @endif
     </div>
 
     <div class="section">
-        <h2>{{ __('filament.description') }}</h2>
-        <p>{{ $project->description ?? __('filament.no_description') }}</p>
+        <h2>{!! htmlspecialchars($translations['description'], ENT_QUOTES, 'UTF-8') !!}</h2>
+        <p>{{ $project->description ?? $translations['no_description'] }}</p>
     </div>
 
     <div class="section">
-        <h2>{{ __('filament.project_statistics') }}</h2>
+        <h2>{!! htmlspecialchars($translations['project_statistics'], ENT_QUOTES, 'UTF-8') !!}</h2>
         <div class="stats-grid">
             <div class="stat-box">
-                <div class="stat-label">{{ __('filament.budget') }}</div>
+                <div class="stat-label">{!! htmlspecialchars($translations['budget'], ENT_QUOTES, 'UTF-8') !!}</div>
                 <div class="stat-value">{{ number_format($project->budget ?? 0, 2) }} {{ $project->currency ?? 'USD' }}</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">{{ __('filament.actual_cost') }}</div>
+                <div class="stat-label">{!! htmlspecialchars($translations['actual_cost'], ENT_QUOTES, 'UTF-8') !!}</div>
                 <div class="stat-value">{{ number_format($project->actual_cost ?? 0, 2) }} {{ $project->currency ?? 'USD' }}</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">{{ __('filament.profit') }}</div>
+                <div class="stat-label">{!! htmlspecialchars($translations['profit'], ENT_QUOTES, 'UTF-8') !!}</div>
                 <div class="stat-value">{{ number_format($project->profit ?? 0, 2) }} {{ $project->currency ?? 'USD' }}</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">{{ __('filament.progress') }}</div>
+                <div class="stat-label">{!! htmlspecialchars($translations['progress'], ENT_QUOTES, 'UTF-8') !!}</div>
                 <div class="stat-value">{{ $project->progress ?? 0 }}%</div>
             </div>
         </div>
@@ -233,14 +262,14 @@
 
     @if($project->tasks->count() > 0)
     <div class="section">
-        <h2>{{ __('filament.tasks') }} ({{ $project->tasks->count() }})</h2>
+        <h2>{!! htmlspecialchars($translations['tasks'], ENT_QUOTES, 'UTF-8') !!} ({{ $project->tasks->count() }})</h2>
         <table class="tasks-table">
             <thead>
                 <tr>
-                    <th>{{ __('filament.title') }}</th>
-                    <th>{{ __('filament.status') }}</th>
-                    <th>{{ __('filament.priority') }}</th>
-                    <th>{{ __('filament.due_date') }}</th>
+                    <th>{!! htmlspecialchars($translations['title'], ENT_QUOTES, 'UTF-8') !!}</th>
+                    <th>{!! htmlspecialchars($translations['status'], ENT_QUOTES, 'UTF-8') !!}</th>
+                    <th>{!! htmlspecialchars($translations['priority'], ENT_QUOTES, 'UTF-8') !!}</th>
+                    <th>{!! htmlspecialchars($translations['due_date'], ENT_QUOTES, 'UTF-8') !!}</th>
                 </tr>
             </thead>
             <tbody>
@@ -258,8 +287,8 @@
     @endif
 
     <div class="footer">
-        <p>{{ __('filament.generated_at') }}: {{ \App\Helpers\DateHelper::formatDateTime(now()) }}</p>
-        <p>{{ config('app.name') }} - {{ __('filament.project_report') }}</p>
+        <p>{!! htmlspecialchars($translations['generated_at'], ENT_QUOTES, 'UTF-8') !!}: {{ \App\Helpers\DateHelper::formatDateTime(now()) }}</p>
+        <p>{{ config('app.name') }} - {!! htmlspecialchars($translations['project_report'], ENT_QUOTES, 'UTF-8') !!}</p>
     </div>
 </body>
 </html>
