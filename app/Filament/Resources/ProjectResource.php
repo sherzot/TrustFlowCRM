@@ -174,6 +174,18 @@ class ProjectResource extends Resource
                     ]),
             ])
             ->actions([
+                Tables\Actions\Action::make('view_pdf')
+                    ->label(__('filament.view_pdf'))
+                    ->icon('heroicon-o-document-text')
+                    ->url(fn (Project $record) => route('projects.pdf.view', $record))
+                    ->openUrlInNewTab()
+                    ->visible(fn (): bool => PermissionHelper::hasAnyRole(['super_admin', 'admin', 'manager', 'sales'])),
+                Tables\Actions\Action::make('download_pdf')
+                    ->label(__('filament.download_pdf'))
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->url(fn (Project $record) => route('projects.pdf.download', $record))
+                    ->openUrlInNewTab()
+                    ->visible(fn (): bool => PermissionHelper::hasAnyRole(['super_admin', 'admin', 'manager', 'sales'])),
                 Tables\Actions\EditAction::make()
                     ->visible(fn ($record) => PermissionHelper::can('edit projects')),
                 Tables\Actions\DeleteAction::make()

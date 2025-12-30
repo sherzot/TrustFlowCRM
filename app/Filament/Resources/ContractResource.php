@@ -132,6 +132,18 @@ class ContractResource extends Resource
                     ]),
             ])
             ->actions([
+                Tables\Actions\Action::make('view_pdf')
+                    ->label(__('filament.view_pdf'))
+                    ->icon('heroicon-o-document-text')
+                    ->url(fn (Contract $record) => route('contracts.pdf.view', $record))
+                    ->openUrlInNewTab()
+                    ->visible(fn (): bool => PermissionHelper::hasAnyRole(['super_admin', 'admin', 'manager', 'sales'])),
+                Tables\Actions\Action::make('download_pdf')
+                    ->label(__('filament.download_pdf'))
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->url(fn (Contract $record) => route('contracts.pdf.download', $record))
+                    ->openUrlInNewTab()
+                    ->visible(fn (): bool => PermissionHelper::hasAnyRole(['super_admin', 'admin', 'manager', 'sales'])),
                 Tables\Actions\Action::make('send')
                     ->label(__('filament.send'))
                     ->icon('heroicon-o-paper-airplane')

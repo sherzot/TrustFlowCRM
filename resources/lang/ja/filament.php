@@ -168,4 +168,16 @@ return [
     // Kanban Board
     'no_deals' => '取引なし',
     'ai_score_label' => 'AIスコア',
+    
+    // PDF
+    'view_pdf' => 'PDFを表示',
+    'download_pdf' => 'PDFをダウンロード',
+    'unauthorized' => '権限がありません',
+    'generated_at' => '生成日時',
+    'contract_document' => '契約書',
+    'project_report' => 'プロジェクトレポート',
+    'project_statistics' => 'プロジェクト統計',
+    'no_description' => '説明なし',
+    'signed_by' => '署名者',
+    'signature' => '署名',
 ];

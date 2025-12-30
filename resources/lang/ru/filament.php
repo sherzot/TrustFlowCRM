@@ -168,5 +168,17 @@ return [
     // Kanban Board
     'no_deals' => 'Нет сделок',
     'ai_score_label' => 'AI Оценка',
+    
+    // PDF
+    'view_pdf' => 'Просмотр PDF',
+    'download_pdf' => 'Скачать PDF',
+    'unauthorized' => 'Неавторизован',
+    'generated_at' => 'Создано',
+    'contract_document' => 'Документ контракта',
+    'project_report' => 'Отчет по проекту',
+    'project_statistics' => 'Статистика проекта',
+    'no_description' => 'Нет описания',
+    'signed_by' => 'Подписан',
+    'signature' => 'Подпись',
 ];
 

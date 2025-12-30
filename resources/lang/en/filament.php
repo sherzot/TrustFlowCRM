@@ -168,5 +168,17 @@ return [
     // Kanban Board
     'no_deals' => 'No deals',
     'ai_score_label' => 'AI Score',
+    
+    // PDF
+    'view_pdf' => 'View PDF',
+    'download_pdf' => 'Download PDF',
+    'unauthorized' => 'Unauthorized',
+    'generated_at' => 'Generated At',
+    'contract_document' => 'Contract Document',
+    'project_report' => 'Project Report',
+    'project_statistics' => 'Project Statistics',
+    'no_description' => 'No description',
+    'signed_by' => 'Signed By',
+    'signature' => 'Signature',
 ];
 

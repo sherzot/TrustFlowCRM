@@ -179,5 +179,17 @@ return [
     'won_deals_average' => 'Yutgan bitimlar o\'rtachasi',
     'lead_to_account' => 'Liddan hisobga',
     'costs' => 'Xarajatlar',
+    
+    // PDF
+    'view_pdf' => 'PDF ko\'rish',
+    'download_pdf' => 'PDF yuklab olish',
+    'unauthorized' => 'Ruxsatsiz kirish',
+    'generated_at' => 'Yaratilgan sana',
+    'contract_document' => 'Shartnoma hujjati',
+    'project_report' => 'Loyiha hisoboti',
+    'project_statistics' => 'Loyiha statistikasi',
+    'no_description' => 'Tavsif yo\'q',
+    'signed_by' => 'Imzolagan',
+    'signature' => 'Imzo',
 ];
 

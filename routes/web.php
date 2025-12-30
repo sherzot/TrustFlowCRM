@@ -17,3 +17,14 @@ Route::get('/client-portal/project/{id}', [\App\Http\Controllers\ClientPortalCon
 Route::get('/client-portal/invoice/{id}', [\App\Http\Controllers\ClientPortalController::class, 'invoice'])->name('client-portal.invoice');
 Route::match(['get', 'post'], '/client-portal/contract/{id}/sign', [\App\Http\Controllers\ClientPortalController::class, 'signContract'])->name('client-portal.sign-contract');
 
+// PDF routes (protected by Filament auth middleware)
+Route::middleware(['auth'])->group(function () {
+    // Contract PDF routes
+    Route::get('/contracts/{contract}/pdf/view', [\App\Http\Controllers\ContractPdfController::class, 'view'])->name('contracts.pdf.view');
+    Route::get('/contracts/{contract}/pdf/download', [\App\Http\Controllers\ContractPdfController::class, 'download'])->name('contracts.pdf.download');
+    
+    // Project PDF routes
+    Route::get('/projects/{project}/pdf/view', [\App\Http\Controllers\ProjectPdfController::class, 'view'])->name('projects.pdf.view');
+    Route::get('/projects/{project}/pdf/download', [\App\Http\Controllers\ProjectPdfController::class, 'download'])->name('projects.pdf.download');
+});
+
