@@ -75,6 +75,27 @@ class PdfHelper
             }
         }
         
+        // Invoice uchun
+        if (isset($model->invoice_number)) {
+            $textFields[] = $model->invoice_number ?? '';
+            $textFields[] = $model->notes ?? '';
+            
+            if ($model->account) {
+                $textFields[] = $model->account->name ?? '';
+            }
+            
+            if ($model->project) {
+                $textFields[] = $model->project->name ?? '';
+            }
+            
+            // Invoice items
+            if (method_exists($model, 'items') && $model->items) {
+                foreach ($model->items as $item) {
+                    $textFields[] = $item->description ?? '';
+                }
+            }
+        }
+        
         return self::hasJapaneseCharacters($textFields);
     }
 

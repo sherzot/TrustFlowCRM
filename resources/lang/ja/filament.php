@@ -113,6 +113,11 @@ return [
     'sent' => '送信済み',
     'paid' => '支払済み',
     'overdue' => '期限切れ',
+    'quantity' => '数量',
+    'unit_price' => '単価',
+    'amount' => '金額',
+    'items' => '項目',
+    'invoice_document' => '請求書',
 
     // Status Options
     'active' => 'アクティブ',

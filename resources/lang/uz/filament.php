@@ -116,6 +116,11 @@ return [
     'sent' => 'Yuborilgan',
     'paid' => 'To\'langan',
     'overdue' => 'Muddat o\'tgan',
+    'quantity' => 'Miqdor',
+    'unit_price' => 'Birlik narxi',
+    'amount' => 'Summa',
+    'items' => 'Elementlar',
+    'invoice_document' => 'Hisob-faktura hujjati',
     
     // Status Options
     'active' => 'Faol',

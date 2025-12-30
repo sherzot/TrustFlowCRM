@@ -183,6 +183,17 @@ class InvoiceResource extends Resource
                     ]),
             ])
             ->actions([
+                Tables\Actions\Action::make('view_pdf')
+                    ->label(__('filament.view_pdf'))
+                    ->url(fn ($record) => route('invoices.pdf.view', $record))
+                    ->openUrlInNewTab()
+                    ->icon('heroicon-o-eye')
+                    ->visible(fn ($record) => PermissionHelper::hasAnyRole(['super_admin', 'admin', 'manager', 'sales'])),
+                Tables\Actions\Action::make('download_pdf')
+                    ->label(__('filament.download_pdf'))
+                    ->url(fn ($record) => route('invoices.pdf.download', $record))
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->visible(fn ($record) => PermissionHelper::hasAnyRole(['super_admin', 'admin', 'manager', 'sales'])),
                 Tables\Actions\EditAction::make()
                     ->visible(fn ($record) => PermissionHelper::can('edit invoices')),
                 Tables\Actions\DeleteAction::make()

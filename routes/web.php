@@ -26,5 +26,9 @@ Route::middleware(['auth'])->group(function () {
     // Project PDF routes
     Route::get('/projects/{project}/pdf/view', [\App\Http\Controllers\ProjectPdfController::class, 'view'])->name('projects.pdf.view');
     Route::get('/projects/{project}/pdf/download', [\App\Http\Controllers\ProjectPdfController::class, 'download'])->name('projects.pdf.download');
+    
+    // Invoice PDF routes
+    Route::get('/invoices/{invoice}/pdf/view', [\App\Http\Controllers\InvoicePdfController::class, 'view'])->name('invoices.pdf.view');
+    Route::get('/invoices/{invoice}/pdf/download', [\App\Http\Controllers\InvoicePdfController::class, 'download'])->name('invoices.pdf.download');
 });
 

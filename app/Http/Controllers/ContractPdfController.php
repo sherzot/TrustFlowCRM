@@ -33,7 +33,7 @@ class ContractPdfController extends Controller
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
         app('translator')->setLocale($locale);
-        
+
         // Translation key'larni oldindan yuklash va UTF-8 encoding bilan ishlatish
         $translations = [
             'contract' => trans('filament.contract', [], $locale),
@@ -96,7 +96,7 @@ class ContractPdfController extends Controller
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
         app('translator')->setLocale($locale);
-        
+
         // Translation key'larni oldindan yuklash va UTF-8 encoding bilan ishlatish
         $translations = [
             'contract' => trans('filament.contract', [], $locale),

@@ -113,6 +113,11 @@ return [
     'sent' => 'Отправлен',
     'paid' => 'Оплачен',
     'overdue' => 'Просрочен',
+    'quantity' => 'Количество',
+    'unit_price' => 'Цена за единицу',
+    'amount' => 'Сумма',
+    'items' => 'Позиции',
+    'invoice_document' => 'Счет-фактура',
     
     // Status Options
     'active' => 'Активный',

@@ -113,6 +113,11 @@ return [
     'sent' => 'Sent',
     'paid' => 'Paid',
     'overdue' => 'Overdue',
+    'quantity' => 'Quantity',
+    'unit_price' => 'Unit price',
+    'amount' => 'Amount',
+    'items' => 'Items',
+    'invoice_document' => 'Invoice document',
     
     // Status Options
     'active' => 'Active',
