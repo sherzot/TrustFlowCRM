@@ -28,6 +28,7 @@ class Account extends Model implements HasMedia
         'employee_count',
         'status',
         'ai_score',
+        'portal_token',
     ];
 
     protected function casts(): array

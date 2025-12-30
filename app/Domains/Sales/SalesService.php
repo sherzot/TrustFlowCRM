@@ -87,6 +87,16 @@ class SalesService
             'actual_close_date' => now(),
         ]);
 
+        // Avtomatik Project yaratish
+        if (!$deal->project) {
+            $deliveryService = app(\App\Domains\Delivery\DeliveryService::class);
+            $deliveryService->createProjectFromDeal($deal->id, [
+                'name' => $deal->name,
+                'description' => $deal->description,
+                'start_date' => now(),
+            ]);
+        }
+
         return $deal;
     }
 

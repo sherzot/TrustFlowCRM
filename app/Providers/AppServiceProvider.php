@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Models\Deal;
 use App\Models\Lead;
+use App\Models\Project;
 use App\Observers\DealObserver;
 use App\Observers\LeadObserver;
+use App\Observers\ProjectObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Deal::observe(DealObserver::class);
         Lead::observe(LeadObserver::class);
+        Project::observe(ProjectObserver::class);
     }
 }
 
