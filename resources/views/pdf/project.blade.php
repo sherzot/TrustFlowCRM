@@ -6,7 +6,11 @@
     <title>{{ __('filament.project') }} - {{ $project->name }}</title>
     <style>
         @php
-            $locale = app()->getLocale();
+            // Locale'ni to'g'ri o'rnatish
+            $locale = $locale ?? app()->getLocale();
+            app()->setLocale($locale);
+            app('translator')->setLocale($locale);
+            
             // Matn ichida Yaponcha belgilar bor-yo'qligini tekshirish
             $hasJapanese = $hasJapanese ?? \App\Helpers\PdfHelper::modelHasJapaneseCharacters($project);
         @endphp

@@ -32,12 +32,15 @@ class ProjectPdfController extends Controller
         // Locale'ni o'rnatish (session'dan yoki request'dan)
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
+        
+        // Translation cache'ni tozalash va qayta yuklash
+        app('translator')->setLocale($locale);
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $project);
         $hasJapanese = PdfHelper::modelHasJapaneseCharacters($project);
 
-        $pdf = Pdf::loadView('pdf.project', compact('project', 'hasJapanese'))
+        $pdf = Pdf::loadView('pdf.project', compact('project', 'hasJapanese', 'locale'))
             ->setPaper('a4', 'portrait')
             ->setOption('enable-font-subsetting', true)
             ->setOption('isRemoteEnabled', true)
@@ -70,12 +73,15 @@ class ProjectPdfController extends Controller
         // Locale'ni o'rnatish (session'dan yoki request'dan)
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
+        
+        // Translation cache'ni tozalash va qayta yuklash
+        app('translator')->setLocale($locale);
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $project);
         $hasJapanese = PdfHelper::modelHasJapaneseCharacters($project);
 
-        $pdf = Pdf::loadView('pdf.project', compact('project', 'hasJapanese'))
+        $pdf = Pdf::loadView('pdf.project', compact('project', 'hasJapanese', 'locale'))
             ->setPaper('a4', 'portrait')
             ->setOption('enable-font-subsetting', true)
             ->setOption('isRemoteEnabled', true)
