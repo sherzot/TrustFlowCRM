@@ -20,6 +20,11 @@ return new class extends Migration
         throw_if(empty($tableNames), Exception::class, 'Error: config/permission.php not loaded. Run [php artisan config:clear] and try again.');
         throw_if($teams && empty($columnNames['team_foreign_key'] ?? null), Exception::class, 'Error: team_foreign_key on config/permission.php not loaded. Run [php artisan config:clear] and try again.');
 
+        // Ehtiyot bo'lish: agar jadvallar allaqachon mavjud bo'lsa, yaratmaslik
+        if (Schema::hasTable($tableNames['permissions'])) {
+            return;
+        }
+
         Schema::create($tableNames['permissions'], static function (Blueprint $table) {
             // $table->engine('InnoDB');
             $table->bigIncrements('id'); // permission id

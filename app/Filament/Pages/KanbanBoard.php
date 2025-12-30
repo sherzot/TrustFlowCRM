@@ -37,7 +37,7 @@ class KanbanBoard extends Page
     public function getDealsByStage(): array
     {
         $tenantId = Auth::user()->tenant_id;
-        
+
         $stages = [
             'new' => __('filament.new'),
             'qualified' => __('filament.qualified'),
@@ -69,4 +69,3 @@ class KanbanBoard extends Page
         return $dealsByStage;
     }
 }
-
