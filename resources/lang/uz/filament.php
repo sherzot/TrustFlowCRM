@@ -1,0 +1,176 @@
+<?php
+
+return [
+    // Navigation
+    'accounts' => 'Hisoblar',
+    'contacts' => 'Kontaktlar',
+    'leads' => 'Lidlar',
+    'deals' => 'Bitimlar',
+    'projects' => 'Loyihalar',
+    'tasks' => 'Vazifalar',
+    'invoices' => 'Hisob-fakturalar',
+    'sales' => 'Sotish',
+    'delivery' => 'Yetkazib berish',
+    'finance' => 'Moliya',
+    'system' => 'Tizim',
+    'settings' => 'Sozlamalar',
+    'language_settings' => 'Til sozlamalari',
+    'select_current_language' => 'Joriy tilni tanlang',
+    'current_language' => 'Joriy til',
+    
+    // Form Fields
+    'first_name' => 'Ism',
+    'last_name' => 'Familiya',
+    'email' => 'Email',
+    'phone' => 'Telefon',
+    'mobile' => 'Mobil telefon',
+    'title' => 'Lavozim',
+    'department' => 'Bo\'lim',
+    'is_primary' => 'Asosiy kontakt',
+    'status' => 'Holat',
+    'account' => 'Hisob',
+    'name' => 'Nomi',
+    'industry' => 'Soha',
+    'website' => 'Veb-sayt',
+    'address' => 'Manzil',
+    'city' => 'Shahar',
+    'state' => 'Viloyat',
+    'country' => 'Mamlakat',
+    'postal_code' => 'Pochta indeksi',
+    'annual_revenue' => 'Yillik daromad',
+    'employee_count' => 'Xodimlar soni',
+    'ai_score' => 'AI balli',
+    
+    // Lead Fields
+    'source' => 'Manba',
+    'company' => 'Kompaniya',
+    'description' => 'Tavsif',
+    'new' => 'Yangi',
+    'contacted' => 'Bog\'langan',
+    'qualified' => 'Malakali',
+    'converted' => 'Aylantirilgan',
+    'convert' => 'Aylantirish',
+    
+    // Deal Fields
+    'contact' => 'Kontakt',
+    'value' => 'Qiymat',
+    'currency' => 'Valyuta',
+    'stage' => 'Bosqich',
+    'probability' => 'Ehtimollik',
+    'expected_close_date' => 'Kutilayotgan yopilish sanasi',
+    'open' => 'Ochiq',
+    'won' => 'Yutgan',
+    'lost' => 'Yo\'qotgan',
+    'win' => 'Yutish',
+    'lose' => 'Yo\'qotish',
+    'lost_reason' => 'Yo\'qotish sababi',
+    'discovery' => 'Kashfiyot',
+    'proposal' => 'Taklif',
+    'negotiation' => 'Muzokara',
+    
+    // Project Fields
+    'deal' => 'Bitim',
+    'start_date' => 'Boshlanish sanasi',
+    'end_date' => 'Tugash sanasi',
+    'budget' => 'Byudjet',
+    'actual_cost' => 'Haqiqiy xarajat',
+    'profit' => 'Foyda',
+    'progress' => 'Jarayon',
+    'planning' => 'Rejalashtirilmoqda',
+    'on_hold' => 'Kutilmoqda',
+    'completed' => 'Tugallangan',
+    'cancelled' => 'Bekor qilingan',
+    
+    // Task Fields
+    'project' => 'Loyiha',
+    'assigned_to' => 'Tayinlangan',
+    'priority' => 'Ustuvorlik',
+    'due_date' => 'Muddat',
+    'estimated_hours' => 'Taxminiy soatlar',
+    'actual_hours' => 'Haqiqiy soatlar',
+    'todo' => 'Bajarilishi kerak',
+    'in_progress' => 'Jarayonda',
+    'review' => 'Ko\'rib chiqish',
+    'done' => 'Bajarilgan',
+    'low' => 'Past',
+    'medium' => 'O\'rtacha',
+    'high' => 'Yuqori',
+    'urgent' => 'Shoshilinch',
+    
+    // Invoice Fields
+    'invoice_number' => 'Hisob-faktura raqami',
+    'issue_date' => 'Chiqarilgan sana',
+    'subtotal' => 'Kichik jami',
+    'tax_rate' => 'Soliq stavkasi',
+    'tax_amount' => 'Soliq summasi',
+    'total' => 'Jami',
+    'notes' => 'Eslatmalar',
+    'paid_at' => 'To\'langan sana',
+    'draft' => 'Qoralama',
+    'sent' => 'Yuborilgan',
+    'paid' => 'To\'langan',
+    'overdue' => 'Muddat o\'tgan',
+    
+    // Status Options
+    'active' => 'Faol',
+    'inactive' => 'Nofaol',
+    
+    // Actions
+    'create' => 'Yaratish',
+    'edit' => 'Tahrirlash',
+    'delete' => 'O\'chirish',
+    'save' => 'Saqlash',
+    'cancel' => 'Bekor qilish',
+    'select_option' => 'Variantni tanlang',
+    'actions' => 'Amallar',
+    
+    // Additional Options
+    'referral' => 'Tavsiya',
+    'social_media' => 'Ijtimoiy tarmoqlar',
+    'email_campaign' => 'Email kampaniya',
+    'other' => 'Boshqa',
+    
+    // Pages
+    'dashboard' => 'Boshqaruv paneli',
+    'kanban_board' => 'Kanban doska',
+    'system_health' => 'Tizim holati',
+    'okr_dashboard' => 'OKR boshqaruv paneli',
+    'analytics' => 'Tahlil',
+    
+    // System Health
+    'database' => 'Ma\'lumotlar bazasi',
+    'cache' => 'Kesh',
+    'queue' => 'Navbat',
+    'storage' => 'Xotira',
+    'healthy' => 'Sog\'lom',
+    'unhealthy' => 'Nosog\'lom',
+    'warning' => 'Ogohlantirish',
+    'database_connection_successful' => 'Ma\'lumotlar bazasiga ulanish muvaffaqiyatli',
+    'cache_is_working' => 'Kesh ishlayapti',
+    'queue_size' => 'Navbat o\'lchami',
+    'storage_used' => 'Ishlatilgan xotira',
+    
+    // OKR Dashboard
+    'deals_won' => 'Yutgan bitimlar',
+    'deals_value' => 'Bitimlar qiymati',
+    'revenue' => 'Daromad',
+    'projects_completed' => 'Tugallangan loyihalar',
+    'current_value' => 'Joriy qiymat',
+    'target' => 'Maqsad',
+    'progress' => 'Jarayon',
+    
+    // Kanban Board
+    'no_deals' => 'Bitimlar yo\'q',
+    'ai_score_label' => 'AI balli',
+    
+    // Widgets
+    'high_score_leads' => 'Yuqori balli lidlar',
+    'high_score_deals' => 'Yuqori balli bitimlar',
+    'avg_deal_value' => 'O\'rtacha bitim qiymati',
+    'conversion_rate' => 'Konversiya darajasi',
+    'ai_score_greater_than_70' => 'AI balli > 70',
+    'won_deals_average' => 'Yutgan bitimlar o\'rtachasi',
+    'lead_to_account' => 'Liddan hisobga',
+    'costs' => 'Xarajatlar',
+];
+

@@ -13,7 +13,7 @@ return [
     'locale' => env('APP_LOCALE', 'ja'),
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
     'faker_locale' => env('APP_FAKER_LOCALE', 'ja_JP'),
-    'available_locales' => ['ja', 'en', 'ru'],
+    'available_locales' => ['ja', 'en', 'ru', 'uz'],
     'key' => env('APP_KEY'),
     'cipher' => 'AES-256-CBC',
     'maintenance' => [

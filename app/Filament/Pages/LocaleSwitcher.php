@@ -20,7 +20,7 @@ class LocaleSwitcher extends Page
 
     public function switchLocale(string $locale): void
     {
-        if (in_array($locale, ['ja', 'en', 'ru'])) {
+        if (in_array($locale, ['ja', 'en', 'ru', 'uz'])) {
             Session::put('locale', $locale);
             App::setLocale($locale);
             

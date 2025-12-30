@@ -132,6 +132,9 @@ return [
     'system_health' => 'System Health',
     'okr_dashboard' => 'OKR Dashboard',
     'analytics' => 'Analytics',
+    'language_settings' => 'Language Settings',
+    'select_current_language' => 'Select your current language',
+    'current_language' => 'Current Language',
     
     // System Health
     'database' => 'Database',

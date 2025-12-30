@@ -47,6 +47,8 @@ class DateHelper
 
     /**
      * Get date format for Filament DatePicker display
+     * Japanese: 2025年12月29日
+     * English/Russian/Uzbek: 2025.12.29
      */
     public static function getDatePickerDisplayFormat(): string
     {

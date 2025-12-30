@@ -315,6 +315,7 @@ Access the application at: `http://localhost:8080/admin`
 - 🇯🇵 **Japanese (ja)** - Main language
 - 🇬🇧 **English (en)** - Fallback language
 - 🇷🇺 **Russian (ru)** - Additional language
+- 🇺🇿 **Uzbek (uz)** - Additional language
 
 ### Switching Language
 

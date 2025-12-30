@@ -132,6 +132,9 @@ return [
     'system_health' => 'Состояние системы',
     'okr_dashboard' => 'OKR Панель',
     'analytics' => 'Аналитика',
+    'language_settings' => 'Настройки языка',
+    'select_current_language' => 'Выберите текущий язык',
+    'current_language' => 'Текущий язык',
     
     // System Health
     'database' => 'База данных',

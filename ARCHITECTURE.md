@@ -83,13 +83,14 @@ trustflow-crm/
 - **Japanese (ja)** - Main language
 - **English (en)** - Secondary language
 - **Russian (ru)** - Third language
+- **Uzbek (uz)** - Fourth language
 - Dynamic language switching via LocaleSwitcher page
 - SetLocale middleware for automatic locale detection
 - All Filament Resources and Pages fully translated
 - Translation files: `resources/lang/{locale}/filament.php`
 - **Locale-based Date Formatting**: 
   - Japanese: `2025年12月29日` (Y年m月d日)
-  - English/Russian: `2025.12.29` (Y.m.d)
+  - English/Russian/Uzbek: `2025.12.29` (Y.m.d)
   - Applied to all DatePicker components and date columns
 
 ### 3. AI-Powered Features

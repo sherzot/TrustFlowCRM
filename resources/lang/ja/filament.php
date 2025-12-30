@@ -132,6 +132,9 @@ return [
     'system_health' => 'システムヘルス',
     'okr_dashboard' => 'OKRダッシュボード',
     'analytics' => '分析',
+    'language_settings' => '言語設定',
+    'select_current_language' => '現在の言語を選択してください',
+    'current_language' => '現在の言語',
 
     // System Health
     'database' => 'データベース',
