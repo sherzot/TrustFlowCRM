@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Helpers\PermissionHelper;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProjectPdfController extends Controller
@@ -27,7 +28,17 @@ class ProjectPdfController extends Controller
 
         $project->load(['account', 'deal', 'tasks']);
 
-        $pdf = Pdf::loadView('pdf.project', compact('project'));
+        // Locale'ni o'rnatish (session'dan yoki request'dan)
+        $locale = session('locale', $request->get('locale', app()->getLocale()));
+        App::setLocale($locale);
+
+        $pdf = Pdf::loadView('pdf.project', compact('project'))
+            ->setPaper('a4', 'portrait')
+            ->setOption('enable-font-subsetting', true)
+            ->setOption('isRemoteEnabled', true)
+            ->setOption('defaultFont', 'dejavu sans')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', false);
 
         return $pdf->stream("project-{$project->id}.pdf");
     }
@@ -50,7 +61,17 @@ class ProjectPdfController extends Controller
 
         $project->load(['account', 'deal', 'tasks']);
 
-        $pdf = Pdf::loadView('pdf.project', compact('project'));
+        // Locale'ni o'rnatish (session'dan yoki request'dan)
+        $locale = session('locale', $request->get('locale', app()->getLocale()));
+        App::setLocale($locale);
+
+        $pdf = Pdf::loadView('pdf.project', compact('project'))
+            ->setPaper('a4', 'portrait')
+            ->setOption('enable-font-subsetting', true)
+            ->setOption('isRemoteEnabled', true)
+            ->setOption('defaultFont', 'dejavu sans')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', false);
 
         return $pdf->download("project-{$project->id}.pdf");
     }

@@ -5,8 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ __('filament.contract') }} - {{ $contract->contract_number }}</title>
     <style>
+        @php
+            $locale = app()->getLocale();
+            // Har bir til uchun to'g'ri font
+            $fontFamily = match($locale) {
+                'ja' => 'dejavu sans', // Yapon tili uchun
+                'ru' => 'dejavu sans', // Rus tili uchun
+                'uz' => 'dejavu sans', // O'zbek tili uchun
+                default => 'dejavu sans', // Ingliz tili va default
+            };
+        @endphp
+        * {
+            font-family: {{ $fontFamily }}, sans-serif !important;
+        }
         body {
-            font-family: 'DejaVu Sans', sans-serif;
+            font-family: {{ $fontFamily }}, sans-serif;
             font-size: 12px;
             line-height: 1.6;
             color: #333;

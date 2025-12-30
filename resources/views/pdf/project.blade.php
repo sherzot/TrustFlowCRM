@@ -1,12 +1,30 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ __('filament.project') }} - {{ $project->name }}</title>
     <style>
+        @php
+            $locale = app()->getLocale();
+        @endphp
+        @font-face {
+            font-family: 'DejaVu Sans';
+            font-style: normal;
+            font-weight: normal;
+            src: url('{{ storage_path('fonts/DejaVuSans.ttf') }}') format('truetype');
+        }
+        @font-face {
+            font-family: 'DejaVu Sans';
+            font-style: normal;
+            font-weight: bold;
+            src: url('{{ storage_path('fonts/DejaVuSans-Bold.ttf') }}') format('truetype');
+        }
+        * {
+            font-family: 'DejaVu Sans', 'DejaVu Sans Unicode', sans-serif !important;
+        }
         body {
-            font-family: 'DejaVu Sans', sans-serif;
+            font-family: 'DejaVu Sans', 'DejaVu Sans Unicode', sans-serif;
             font-size: 12px;
             line-height: 1.6;
             color: #333;
