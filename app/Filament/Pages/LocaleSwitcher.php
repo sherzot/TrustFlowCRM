@@ -18,6 +18,16 @@ class LocaleSwitcher extends Page
 
     protected static ?int $navigationSort = 99;
 
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.language_settings');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.settings');
+    }
+
     public function switchLocale(string $locale): void
     {
         if (in_array($locale, ['ja', 'en', 'ru', 'uz'])) {
