@@ -32,19 +32,24 @@ class ContractPdfController extends Controller
         // Locale'ni o'rnatish (session'dan yoki request'dan)
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
-        
+
         // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $contract);
         $hasJapanese = PdfHelper::modelHasJapaneseCharacters($contract);
+        
+        // Agar Yaponcha belgilar bo'lsa, Noto Sans JP, aks holda DejaVu Sans
+        // Lekin ikkala fontni ham yuklash uchun DejaVu Sans'ni default qilib qo'yamiz
+        // CSS'da fallback fontlar ishlatiladi
+        $pdfDefaultFont = ($locale === 'ja' || $hasJapanese) ? 'noto sans jp' : 'dejavu sans';
 
         $pdf = Pdf::loadView('pdf.contract', compact('contract', 'hasJapanese', 'locale'))
             ->setPaper('a4', 'portrait')
             ->setOption('enable-font-subsetting', true)
             ->setOption('isRemoteEnabled', true)
-            ->setOption('defaultFont', $defaultFont)
+            ->setOption('defaultFont', $pdfDefaultFont)
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', false)
             ->setOption('chroot', realpath(base_path()));
@@ -73,19 +78,24 @@ class ContractPdfController extends Controller
         // Locale'ni o'rnatish (session'dan yoki request'dan)
         $locale = session('locale', $request->get('locale', app()->getLocale()));
         App::setLocale($locale);
-        
+
         // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $contract);
         $hasJapanese = PdfHelper::modelHasJapaneseCharacters($contract);
+        
+        // Agar Yaponcha belgilar bo'lsa, Noto Sans JP, aks holda DejaVu Sans
+        // Lekin ikkala fontni ham yuklash uchun DejaVu Sans'ni default qilib qo'yamiz
+        // CSS'da fallback fontlar ishlatiladi
+        $pdfDefaultFont = ($locale === 'ja' || $hasJapanese) ? 'noto sans jp' : 'dejavu sans';
 
         $pdf = Pdf::loadView('pdf.contract', compact('contract', 'hasJapanese', 'locale'))
             ->setPaper('a4', 'portrait')
             ->setOption('enable-font-subsetting', true)
             ->setOption('isRemoteEnabled', true)
-            ->setOption('defaultFont', $defaultFont)
+            ->setOption('defaultFont', $pdfDefaultFont)
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', false)
             ->setOption('chroot', realpath(base_path()));

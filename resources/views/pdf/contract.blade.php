@@ -15,6 +15,20 @@
             $hasJapanese = $hasJapanese ?? \App\Helpers\PdfHelper::modelHasJapaneseCharacters($contract);
         @endphp
         
+        {{-- Har doim ikkala fontni ham yuklash --}}
+        @font-face {
+            font-family: 'DejaVu Sans';
+            font-style: normal;
+            font-weight: normal;
+            src: url('{{ storage_path('fonts/DejaVuSans.ttf') }}') format('truetype');
+        }
+        @font-face {
+            font-family: 'DejaVu Sans';
+            font-style: normal;
+            font-weight: bold;
+            src: url('{{ storage_path('fonts/DejaVuSans-Bold.ttf') }}') format('truetype');
+        }
+        
         @if($locale === 'ja' || $hasJapanese)
         {{-- Yapon tili uchun Noto Sans JP font --}}
         @font-face {
@@ -29,26 +43,15 @@
             font-weight: bold;
             src: url('https://fonts.gstatic.com/s/notosansjp/v52/-F6kfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFBEj75s.ttf') format('truetype');
         }
+        {{-- Yaponcha va boshqa tillar uchun fallback fontlar --}}
         * {
-            font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'MS PGothic', sans-serif !important;
+            font-family: 'Noto Sans JP', 'DejaVu Sans', 'DejaVu Sans Unicode', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'MS PGothic', sans-serif !important;
         }
         body {
-            font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'MS PGothic', sans-serif;
+            font-family: 'Noto Sans JP', 'DejaVu Sans', 'DejaVu Sans Unicode', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'MS PGothic', sans-serif;
         }
         @else
         {{-- Boshqa tillar uchun DejaVu Sans --}}
-        @font-face {
-            font-family: 'DejaVu Sans';
-            font-style: normal;
-            font-weight: normal;
-            src: url('{{ storage_path('fonts/DejaVuSans.ttf') }}') format('truetype');
-        }
-        @font-face {
-            font-family: 'DejaVu Sans';
-            font-style: normal;
-            font-weight: bold;
-            src: url('{{ storage_path('fonts/DejaVuSans-Bold.ttf') }}') format('truetype');
-        }
         * {
             font-family: 'DejaVu Sans', 'DejaVu Sans Unicode', sans-serif !important;
         }
