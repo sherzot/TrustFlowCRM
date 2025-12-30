@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="{{ $locale ?? app()->getLocale() }}" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ mb_convert_encoding(__('filament.project'), 'UTF-8', 'UTF-8') }} - {{ $project->name }}</title>
+    <title>{{ $translations['project'] ?? __('filament.project') }} - {{ $project->name }}</title>
     <style>
         @php
             // Locale'ni to'g'ri o'rnatish
