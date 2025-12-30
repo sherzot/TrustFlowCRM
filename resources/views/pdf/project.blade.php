@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ __('filament.project') }} - {{ $project->name }}</title>
+    <title>{{ mb_convert_encoding(__('filament.project'), 'UTF-8', 'UTF-8') }} - {{ $project->name }}</title>
     <style>
         @php
             // Locale'ni to'g'ri o'rnatish
@@ -50,6 +50,9 @@
         body {
             font-family: 'Noto Sans JP', 'DejaVu Sans', 'DejaVu Sans Unicode', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'MS PGothic', sans-serif;
         }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Noto Sans JP', 'DejaVu Sans', 'DejaVu Sans Unicode', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'MS PGothic', sans-serif !important;
+        }
         @else
         {{-- Boshqa tillar uchun DejaVu Sans --}}
         * {
@@ -76,6 +79,10 @@
             color: #f59e0b;
             margin: 0;
             font-size: 24px;
+            font-family: 'Noto Sans JP', 'DejaVu Sans', 'DejaVu Sans Unicode', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'MS PGothic', sans-serif !important;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Noto Sans JP', 'DejaVu Sans', 'DejaVu Sans Unicode', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'MS PGothic', sans-serif !important;
         }
         .project-info {
             margin-bottom: 30px;

@@ -39,7 +39,7 @@ class ContractPdfController extends Controller
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $contract);
         $hasJapanese = PdfHelper::modelHasJapaneseCharacters($contract);
-        
+
         // Agar Yaponcha belgilar bo'lsa, Noto Sans JP, aks holda DejaVu Sans
         // Lekin ikkala fontni ham yuklash uchun DejaVu Sans'ni default qilib qo'yamiz
         // CSS'da fallback fontlar ishlatiladi
@@ -85,7 +85,7 @@ class ContractPdfController extends Controller
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $contract);
         $hasJapanese = PdfHelper::modelHasJapaneseCharacters($contract);
-        
+
         // Agar Yaponcha belgilar bo'lsa, Noto Sans JP, aks holda DejaVu Sans
         // Lekin ikkala fontni ham yuklash uchun DejaVu Sans'ni default qilib qo'yamiz
         // CSS'da fallback fontlar ishlatiladi
