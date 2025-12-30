@@ -36,12 +36,8 @@ class ProjectPdfController extends Controller
         // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
         
-        // Translation cache'ni tozalash (Laravel 11 uchun)
-        try {
-            \Illuminate\Support\Facades\Artisan::call('config:clear');
-        } catch (\Exception $e) {
-            // Ignore if cache clear fails
-        }
+        // Translation'lar avtomatik yuklanadi, cache'ni tozalash shart emas
+        // Laravel 11'da translation'lar har safar yangi locale bilan yuklanadi
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $project);
@@ -89,12 +85,8 @@ class ProjectPdfController extends Controller
         // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
         
-        // Translation cache'ni tozalash (Laravel 11 uchun)
-        try {
-            \Illuminate\Support\Facades\Artisan::call('config:clear');
-        } catch (\Exception $e) {
-            // Ignore if cache clear fails
-        }
+        // Translation'lar avtomatik yuklanadi, cache'ni tozalash shart emas
+        // Laravel 11'da translation'lar har safar yangi locale bilan yuklanadi
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
         $defaultFont = PdfHelper::getFontForLocale($locale, $project);

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Artisan;
 use App\Models\Contract;
 use App\Helpers\PermissionHelper;
 use App\Helpers\PdfHelper;

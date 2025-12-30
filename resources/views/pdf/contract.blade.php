@@ -11,12 +11,7 @@
             app()->setLocale($locale);
             app('translator')->setLocale($locale);
             
-            // Translation cache'ni tozalash (Laravel 11 uchun)
-            try {
-                \Illuminate\Support\Facades\Cache::forget('translation_' . $locale);
-            } catch (\Exception $e) {
-                // Ignore if cache clear fails
-            }
+            // Translation'lar avtomatik yuklanadi, cache'ni tozalash shart emas
             
             // Matn ichida Yaponcha belgilar bor-yo'qligini tekshirish
             $hasJapanese = $hasJapanese ?? \App\Helpers\PdfHelper::modelHasJapaneseCharacters($contract);
