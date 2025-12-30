@@ -19835,3 +19835,4 @@ Stack trace:
 #21 /var/www/html/artisan(14): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
 #22 {main}
 "} 
+[2025-12-30 09:40:59] local.ERROR: AI Lead Scoring Error: OpenAI API key not configured  

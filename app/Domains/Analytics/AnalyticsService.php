@@ -80,21 +80,27 @@ class AnalyticsService
 
     /**
      * AI insights
+     * @param int|null $tenantId If null, returns data for all tenants (Super Admin)
      */
-    public function getAIInsights(int $tenantId): array
+    public function getAIInsights(?int $tenantId): array
     {
-        $highScoreLeads = Lead::where('tenant_id', $tenantId)
-            ->where('ai_score', '>', 70)
-            ->count();
+        $highScoreLeadsQuery = Lead::where('ai_score', '>', 70);
+        $highScoreDealsQuery = Deal::where('ai_score', '>', 70)->where('status', 'open');
+        $avgDealValueQuery = Deal::where('status', 'won');
+        $totalLeadsQuery = Lead::query();
+        $convertedLeadsQuery = Lead::whereNotNull('converted_at');
 
-        $highScoreDeals = Deal::where('tenant_id', $tenantId)
-            ->where('ai_score', '>', 70)
-            ->where('status', 'open')
-            ->count();
+        if ($tenantId !== null) {
+            $highScoreLeadsQuery->where('tenant_id', $tenantId);
+            $highScoreDealsQuery->where('tenant_id', $tenantId);
+            $avgDealValueQuery->where('tenant_id', $tenantId);
+            $totalLeadsQuery->where('tenant_id', $tenantId);
+            $convertedLeadsQuery->where('tenant_id', $tenantId);
+        }
 
-        $avgDealValue = Deal::where('tenant_id', $tenantId)
-            ->where('status', 'won')
-            ->avg('value');
+        $highScoreLeads = $highScoreLeadsQuery->count();
+        $highScoreDeals = $highScoreDealsQuery->count();
+        $avgDealValue = $avgDealValueQuery->avg('value');
 
         return [
             'high_score_leads' => $highScoreLeads,
@@ -104,12 +110,18 @@ class AnalyticsService
         ];
     }
 
-    protected function calculateConversionRate(int $tenantId): float
+    protected function calculateConversionRate(?int $tenantId): float
     {
-        $totalLeads = Lead::where('tenant_id', $tenantId)->count();
-        $convertedLeads = Lead::where('tenant_id', $tenantId)
-            ->whereNotNull('converted_at')
-            ->count();
+        $totalLeadsQuery = Lead::query();
+        $convertedLeadsQuery = Lead::whereNotNull('converted_at');
+
+        if ($tenantId !== null) {
+            $totalLeadsQuery->where('tenant_id', $tenantId);
+            $convertedLeadsQuery->where('tenant_id', $tenantId);
+        }
+
+        $totalLeads = $totalLeadsQuery->count();
+        $convertedLeads = $convertedLeadsQuery->count();
 
         return $totalLeads > 0 ? ($convertedLeads / $totalLeads) * 100 : 0;
     }
