@@ -36,9 +36,11 @@ class ProjectPdfController extends Controller
         // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
         
-        // Translation cache'ni tozalash
-        if (method_exists(app('translator'), 'getLoader')) {
-            app('translator')->getLoader()->flushCache();
+        // Translation cache'ni tozalash (Laravel 11 uchun)
+        try {
+            \Illuminate\Support\Facades\Artisan::call('config:clear');
+        } catch (\Exception $e) {
+            // Ignore if cache clear fails
         }
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
@@ -87,9 +89,11 @@ class ProjectPdfController extends Controller
         // Translation cache'ni tozalash va qayta yuklash
         app('translator')->setLocale($locale);
         
-        // Translation cache'ni tozalash
-        if (method_exists(app('translator'), 'getLoader')) {
-            app('translator')->getLoader()->flushCache();
+        // Translation cache'ni tozalash (Laravel 11 uchun)
+        try {
+            \Illuminate\Support\Facades\Artisan::call('config:clear');
+        } catch (\Exception $e) {
+            // Ignore if cache clear fails
         }
 
         // Font tanlash: locale yoki matn ichidagi Yaponcha belgilarga qarab
