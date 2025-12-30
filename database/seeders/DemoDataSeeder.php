@@ -43,14 +43,17 @@ class DemoDataSeeder extends Seeder
         ]);
 
         // Deals yaratish
+        // Kanban Board uchun ko'pchilik Deal'lar 'open' status'da bo'lishi kerak
         $stages = ['new', 'qualified', 'discovery', 'proposal', 'negotiation', 'won', 'lost'];
         foreach ($accounts as $account) {
+            // Har bir account uchun 2 ta Deal yaratish
+            // 80% 'open' status'da, 20% 'won' yoki 'lost'
             Deal::factory(2)->create([
                 'tenant_id' => $tenantId,
                 'account_id' => $account->id,
                 'contact_id' => $account->contacts()->first()?->id,
                 'stage' => fake()->randomElement($stages),
-                'status' => fake()->randomElement(['open', 'won', 'lost']),
+                'status' => fake()->randomElement(['open', 'open', 'open', 'open', 'won', 'lost']), // 80% open
                 'ai_score' => fake()->numberBetween(40, 90),
             ]);
         }
@@ -82,4 +85,3 @@ class DemoDataSeeder extends Seeder
         }
     }
 }
-

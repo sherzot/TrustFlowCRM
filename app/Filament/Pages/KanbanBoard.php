@@ -50,9 +50,12 @@ class KanbanBoard extends Page
         $dealsByStage = [];
         foreach ($stages as $key => $label) {
             $dealsQuery = Deal::where('stage', $key)
-                ->where('status', 'open');
+                ->where('status', 'open'); // Faqat ochiq Deal'lar
             if ($tenantId !== null) {
                 $dealsQuery->where('tenant_id', $tenantId);
+            } else {
+                // Super Admin uchun barcha tenant'lardan Deal'lar
+                // Lekin faqat ochiq Deal'lar
             }
             $dealsByStage[$key] = [
                 'label' => $label,
