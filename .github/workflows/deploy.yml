@@ -194,6 +194,13 @@ jobs:
           echo "sha-short=${SHA_SHORT}" >> "$GITHUB_OUTPUT"
           echo "image-tag=sherdev/trustflow-crm:sha-${SHA_SHORT}" >> "$GITHUB_OUTPUT"
 
+      # QEMU lets an amd64 runner emulate arm64 during the build so the
+      # resulting image manifest covers both platforms. Required because
+      # the deploy target is an Apple Silicon Mac (linux/arm64) while the
+      # runner is ubuntu-latest (linux/amd64).
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -203,17 +210,19 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build & push
+      - name: Build & push (multi-arch)
         uses: docker/build-push-action@v5
         with:
           context: .
           file: Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             sherdev/trustflow-crm:latest
             sherdev/trustflow-crm:sha-${{ steps.meta.outputs.sha-short }}
           cache-from: type=registry,ref=sherdev/trustflow-crm:buildcache
           cache-to: type=registry,ref=sherdev/trustflow-crm:buildcache,mode=max
+          provenance: false
           build-args: |
             INSTALL_DEV=false
 
