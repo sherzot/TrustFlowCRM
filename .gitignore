@@ -17,3 +17,19 @@ yarn-error.log
 /.idea
 /.vscode
 
+# OS / IDE noise
+.DS_Store
+Thumbs.db
+
+# Laravel runtime caches & logs (should never be committed)
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+
