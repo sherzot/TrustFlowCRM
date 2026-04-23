@@ -1,0 +1,273 @@
+/* ==========================================================================
+   TrustFlow CRM — Filament theme overrides
+   "TrustFlow Indigo" design language
+   --------------------------------------------------------------------------
+   Palette:
+     primary   Indigo     (trust, professionalism)
+     gray      Slate      (modern neutral canvas)
+     success   Emerald    (won / paid)
+     warning   Amber      (at-risk / overdue)
+     danger    Rose       (lost / failed)
+     info      Sky        (informational)
+
+   Inspired by Linear / Attio / Notion — soft shadows, tight vertical rhythm,
+   refined typography, generous spacing on key data.
+   ========================================================================== */
+
+:root {
+    --tf-radius-sm: 0.375rem;
+    --tf-radius-md: 0.625rem;
+    --tf-radius-lg: 0.875rem;
+    --tf-shadow-card: 0 1px 2px 0 rgb(15 23 42 / 0.04),
+                      0 1px 3px 0 rgb(15 23 42 / 0.06);
+    --tf-shadow-card-hover: 0 4px 6px -1px rgb(15 23 42 / 0.08),
+                            0 2px 4px -2px rgb(15 23 42 / 0.06);
+    --tf-border-soft: rgb(226 232 240);
+    --tf-bg-soft: rgb(248 250 252);
+    --tf-text-muted: rgb(100 116 139);
+}
+
+.dark {
+    --tf-border-soft: rgb(30 41 59);
+    --tf-bg-soft: rgb(15 23 42);
+    --tf-text-muted: rgb(148 163 184);
+}
+
+/* --------------------------------------------------------------------------
+   Typography — Inter for UI, proper tabular nums for KPI cards
+   -------------------------------------------------------------------------- */
+.fi-body,
+.fi-sidebar,
+.fi-topbar,
+.fi-main {
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+                 Roboto, "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: -0.005em;
+}
+
+.fi-wi-stats-overview-stat-value,
+.fi-ta-text-item-label,
+.fi-section-header-heading {
+    font-feature-settings: "tnum" 1, "ss01" 1, "cv11" 1;
+}
+
+/* --------------------------------------------------------------------------
+   Topbar — slimmer, cleaner
+   -------------------------------------------------------------------------- */
+.fi-topbar {
+    border-bottom: 1px solid var(--tf-border-soft);
+    backdrop-filter: saturate(180%) blur(8px);
+    background-color: rgb(255 255 255 / 0.85);
+}
+
+.dark .fi-topbar {
+    background-color: rgb(2 6 23 / 0.85);
+}
+
+.fi-topbar-item {
+    font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar — refined group labels & active state
+   -------------------------------------------------------------------------- */
+.fi-sidebar {
+    background-color: var(--tf-bg-soft);
+    border-right: 1px solid var(--tf-border-soft);
+}
+
+.fi-sidebar-group-label {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--tf-text-muted);
+    padding-top: 0.75rem;
+}
+
+.fi-sidebar-item-button {
+    border-radius: var(--tf-radius-md);
+    transition: background-color 120ms ease, color 120ms ease;
+}
+
+.fi-sidebar-item-active .fi-sidebar-item-button {
+    background-color: rgb(79 70 229 / 0.08);
+    color: rgb(79 70 229);
+    font-weight: 600;
+}
+
+.dark .fi-sidebar-item-active .fi-sidebar-item-button {
+    background-color: rgb(129 140 248 / 0.15);
+    color: rgb(199 210 254);
+}
+
+/* --------------------------------------------------------------------------
+   Cards & Sections — softer shadows, indigo focus ring
+   -------------------------------------------------------------------------- */
+.fi-section,
+.fi-wi-stats-overview-stat,
+.fi-fo-component-ctn {
+    border-radius: var(--tf-radius-lg);
+    box-shadow: var(--tf-shadow-card);
+    border: 1px solid var(--tf-border-soft);
+    transition: box-shadow 150ms ease, transform 150ms ease;
+}
+
+.fi-wi-stats-overview-stat:hover {
+    box-shadow: var(--tf-shadow-card-hover);
+    transform: translateY(-1px);
+}
+
+.fi-wi-stats-overview-stat-label {
+    font-weight: 500;
+    color: var(--tf-text-muted);
+    letter-spacing: 0.01em;
+}
+
+.fi-wi-stats-overview-stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+}
+
+.fi-wi-stats-overview-stat-description {
+    font-size: 0.8125rem;
+}
+
+/* --------------------------------------------------------------------------
+   Buttons — slightly firmer radius, crisper shadow
+   -------------------------------------------------------------------------- */
+.fi-btn {
+    border-radius: var(--tf-radius-md);
+    font-weight: 600;
+    letter-spacing: -0.005em;
+}
+
+.fi-btn-color-primary {
+    box-shadow: 0 1px 2px 0 rgb(79 70 229 / 0.3),
+                inset 0 1px 0 rgb(255 255 255 / 0.15);
+}
+
+/* --------------------------------------------------------------------------
+   Tables — reduced row padding, cleaner headers
+   -------------------------------------------------------------------------- */
+.fi-ta-header {
+    background-color: var(--tf-bg-soft);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: var(--tf-text-muted);
+}
+
+.fi-ta-row {
+    transition: background-color 100ms ease;
+}
+
+.fi-ta-row:hover {
+    background-color: rgb(248 250 252);
+}
+
+.dark .fi-ta-row:hover {
+    background-color: rgb(15 23 42);
+}
+
+/* --------------------------------------------------------------------------
+   Empty states — gentler, more inviting
+   -------------------------------------------------------------------------- */
+.fi-ta-empty-state {
+    padding: 4rem 2rem;
+}
+
+.fi-ta-empty-state-heading {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.fi-ta-empty-state-description {
+    color: var(--tf-text-muted);
+    max-width: 32rem;
+    margin-inline: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Badges — subtler background, firmer text
+   -------------------------------------------------------------------------- */
+.fi-badge {
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    border-radius: var(--tf-radius-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Breadcrumbs — low-key separator
+   -------------------------------------------------------------------------- */
+.fi-breadcrumbs-item {
+    font-size: 0.8125rem;
+    color: var(--tf-text-muted);
+}
+
+.fi-breadcrumbs-item:last-child {
+    color: rgb(15 23 42);
+    font-weight: 500;
+}
+
+.dark .fi-breadcrumbs-item:last-child {
+    color: rgb(226 232 240);
+}
+
+/* --------------------------------------------------------------------------
+   Page header — balanced title + actions
+   -------------------------------------------------------------------------- */
+.fi-page-header-heading {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+}
+
+.fi-page-header-subheading {
+    color: var(--tf-text-muted);
+    font-size: 0.9rem;
+}
+
+/* --------------------------------------------------------------------------
+   Dashboard grid — tighter on desktop, gap rhythm
+   -------------------------------------------------------------------------- */
+.fi-page-dashboard .fi-wi-stats-overview {
+    gap: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   Scrollbar — unobtrusive
+   -------------------------------------------------------------------------- */
+.fi-sidebar-nav::-webkit-scrollbar,
+.fi-main::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.fi-sidebar-nav::-webkit-scrollbar-thumb,
+.fi-main::-webkit-scrollbar-thumb {
+    background-color: rgb(148 163 184 / 0.3);
+    border-radius: 999px;
+}
+
+.fi-sidebar-nav::-webkit-scrollbar-thumb:hover,
+.fi-main::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(148 163 184 / 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   Login page — subtle brand wash
+   -------------------------------------------------------------------------- */
+.fi-simple-layout {
+    background-image:
+        radial-gradient(1200px 600px at 10% 10%, rgb(99 102 241 / 0.08), transparent 60%),
+        radial-gradient(1200px 600px at 90% 90%, rgb(16 185 129 / 0.06), transparent 60%);
+}
+
+.fi-simple-main {
+    box-shadow: var(--tf-shadow-card-hover);
+    border-radius: var(--tf-radius-lg);
+}

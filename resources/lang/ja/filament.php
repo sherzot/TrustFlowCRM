@@ -185,4 +185,15 @@ return [
     'no_description' => '説明なし',
     'signed_by' => '署名者',
     'signature' => '署名',
+    // KPI widget
+    'kpi.revenue_mtd' => '今月の売上',
+    'kpi.revenue_mtd_desc' => '今月の入金済み請求',
+    'kpi.pipeline_value' => 'パイプライン総額',
+    'kpi.open_deals' => '件のオープン案件',
+    'kpi.win_rate' => '受注率',
+    'kpi.win_rate_desc' => '過去30日間',
+    'kpi.open_invoices' => '未入金の請求',
+    'kpi.outstanding' => '未入金',
+
+
 ];

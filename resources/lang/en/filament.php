@@ -185,5 +185,16 @@ return [
     'no_description' => 'No description',
     'signed_by' => 'Signed By',
     'signature' => 'Signature',
+    // KPI widget
+    'kpi.revenue_mtd' => 'Revenue MTD',
+    'kpi.revenue_mtd_desc' => 'Paid invoices this month',
+    'kpi.pipeline_value' => 'Pipeline Value',
+    'kpi.open_deals' => 'open deals',
+    'kpi.win_rate' => 'Win Rate',
+    'kpi.win_rate_desc' => 'Last 30 days',
+    'kpi.open_invoices' => 'Open Invoices',
+    'kpi.outstanding' => 'outstanding',
+
+
 ];
 

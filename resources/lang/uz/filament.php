@@ -196,5 +196,16 @@ return [
     'no_description' => 'Tavsif yo\'q',
     'signed_by' => 'Imzolagan',
     'signature' => 'Imzo',
+    // KPI widget
+    'kpi.revenue_mtd' => 'Oy boshidan daromad',
+    'kpi.revenue_mtd_desc' => 'Oy davomida to\'langan invoyslar',
+    'kpi.pipeline_value' => 'Pipeline qiymati',
+    'kpi.open_deals' => 'ta ochiq deal',
+    'kpi.win_rate' => 'G\'alaba foizi',
+    'kpi.win_rate_desc' => 'Oxirgi 30 kun',
+    'kpi.open_invoices' => 'Ochiq invoyslar',
+    'kpi.outstanding' => 'to\'lanmagan',
+
+
 ];
 
