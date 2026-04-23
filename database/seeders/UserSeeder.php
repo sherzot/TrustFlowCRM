@@ -93,6 +93,20 @@ class UserSeeder extends Seeder
         if (!$finance->hasRole('finance')) {
             $finance->assignRole('finance');
         }
+
+        // Viewer (tenant_id = 1) — read-only auditor / external stakeholder
+        $viewer = User::firstOrCreate(
+            ['email' => 'viewer@test.com'],
+            [
+                'name' => 'Viewer User',
+                'password' => Hash::make('viewer123'),
+                'tenant_id' => 1,
+                'role' => 'viewer',
+            ]
+        );
+        if (!$viewer->hasRole('viewer')) {
+            $viewer->assignRole('viewer');
+        }
     }
 }
 

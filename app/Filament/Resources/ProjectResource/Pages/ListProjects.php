@@ -16,7 +16,7 @@ class ListProjects extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(fn () => PermissionHelper::can('create projects')),
+                ->visible(fn () => PermissionHelper::can('projects.create')),
         ];
     }
 }

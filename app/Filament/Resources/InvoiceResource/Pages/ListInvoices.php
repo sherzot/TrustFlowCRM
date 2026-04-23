@@ -16,7 +16,7 @@ class ListInvoices extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(fn () => PermissionHelper::can('create invoices')),
+                ->visible(fn () => PermissionHelper::can('invoices.create')),
         ];
     }
 }

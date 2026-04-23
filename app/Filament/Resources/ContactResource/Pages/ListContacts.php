@@ -16,7 +16,7 @@ class ListContacts extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(fn () => PermissionHelper::can('create contacts')),
+                ->visible(fn () => PermissionHelper::can('contacts.create')),
         ];
     }
 }

@@ -16,13 +16,13 @@ class EditLead extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn () => PermissionHelper::can('delete leads')),
+                ->visible(fn () => PermissionHelper::can('leads.delete')),
         ];
     }
 
     public function canDelete(): bool
     {
-        return PermissionHelper::can('delete leads');
+        return PermissionHelper::can('leads.delete');
     }
 }
 

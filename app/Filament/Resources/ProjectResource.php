@@ -44,17 +44,17 @@ class ProjectResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return PermissionHelper::can('view projects');
+        return PermissionHelper::can('projects.view');
     }
 
     public static function canViewAny(): bool
     {
-        return PermissionHelper::can('view projects');
+        return PermissionHelper::can('projects.view');
     }
 
     public static function canCreate(): bool
     {
-        return PermissionHelper::can('create projects');
+        return PermissionHelper::can('projects.create');
     }
 
     public static function form(Form $form): Form
@@ -187,14 +187,14 @@ class ProjectResource extends Resource
                     ->openUrlInNewTab()
                     ->visible(fn (): bool => PermissionHelper::hasAnyRole(['super_admin', 'admin', 'manager', 'sales'])),
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => PermissionHelper::can('edit projects')),
+                    ->visible(fn ($record) => PermissionHelper::can('projects.update')),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => PermissionHelper::can('delete projects')),
+                    ->visible(fn ($record) => PermissionHelper::can('projects.delete')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => PermissionHelper::can('delete projects')),
+                        ->visible(fn () => PermissionHelper::can('projects.delete')),
                 ]),
             ]);
     }

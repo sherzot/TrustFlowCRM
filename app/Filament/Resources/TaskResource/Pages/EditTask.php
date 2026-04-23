@@ -16,13 +16,13 @@ class EditTask extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn () => PermissionHelper::can('delete tasks')),
+                ->visible(fn () => PermissionHelper::can('tasks.delete')),
         ];
     }
 
     public function canDelete(): bool
     {
-        return PermissionHelper::can('delete tasks');
+        return PermissionHelper::can('tasks.delete');
     }
 }
 

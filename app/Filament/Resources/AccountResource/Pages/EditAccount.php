@@ -16,13 +16,13 @@ class EditAccount extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn () => PermissionHelper::can('delete accounts')),
+                ->visible(fn () => PermissionHelper::can('accounts.delete')),
         ];
     }
 
     public function canDelete(): bool
     {
-        return PermissionHelper::can('delete accounts');
+        return PermissionHelper::can('accounts.delete');
     }
 }
 

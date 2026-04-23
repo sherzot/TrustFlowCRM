@@ -16,13 +16,13 @@ class EditContact extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn () => PermissionHelper::can('delete contacts')),
+                ->visible(fn () => PermissionHelper::can('contacts.delete')),
         ];
     }
 
     public function canDelete(): bool
     {
-        return PermissionHelper::can('delete contacts');
+        return PermissionHelper::can('contacts.delete');
     }
 }
 

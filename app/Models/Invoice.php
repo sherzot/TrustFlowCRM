@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Invoice extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia;
+    use BelongsToTenant, HasFactory, InteractsWithMedia;
 
     protected $fillable = [
         'tenant_id',

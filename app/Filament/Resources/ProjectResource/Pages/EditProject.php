@@ -28,13 +28,13 @@ class EditProject extends EditRecord
                 ->openUrlInNewTab()
                 ->visible(fn (): bool => PermissionHelper::hasAnyRole(['super_admin', 'admin', 'manager', 'sales'])),
             Actions\DeleteAction::make()
-                ->visible(fn () => PermissionHelper::can('delete projects')),
+                ->visible(fn () => PermissionHelper::can('projects.delete')),
         ];
     }
 
     public function canDelete(): bool
     {
-        return PermissionHelper::can('delete projects');
+        return PermissionHelper::can('projects.delete');
     }
 }
 

@@ -43,17 +43,17 @@ class ContactResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return PermissionHelper::can('view contacts');
+        return PermissionHelper::can('contacts.view');
     }
 
     public static function canViewAny(): bool
     {
-        return PermissionHelper::can('view contacts');
+        return PermissionHelper::can('contacts.view');
     }
 
     public static function canCreate(): bool
     {
-        return PermissionHelper::can('create contacts');
+        return PermissionHelper::can('contacts.create');
     }
 
     public static function form(Form $form): Form
@@ -149,14 +149,14 @@ class ContactResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => PermissionHelper::can('edit contacts')),
+                    ->visible(fn ($record) => PermissionHelper::can('contacts.update')),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => PermissionHelper::can('delete contacts')),
+                    ->visible(fn ($record) => PermissionHelper::can('contacts.delete')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => PermissionHelper::can('delete contacts')),
+                        ->visible(fn () => PermissionHelper::can('contacts.delete')),
                 ]),
             ]);
     }

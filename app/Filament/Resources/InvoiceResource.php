@@ -44,17 +44,17 @@ class InvoiceResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return PermissionHelper::can('view invoices');
+        return PermissionHelper::can('invoices.view');
     }
 
     public static function canViewAny(): bool
     {
-        return PermissionHelper::can('view invoices');
+        return PermissionHelper::can('invoices.view');
     }
 
     public static function canCreate(): bool
     {
-        return PermissionHelper::can('create invoices');
+        return PermissionHelper::can('invoices.create');
     }
 
     public static function form(Form $form): Form
@@ -195,14 +195,14 @@ class InvoiceResource extends Resource
                     ->icon('heroicon-o-arrow-down-tray')
                     ->visible(fn ($record) => PermissionHelper::hasAnyRole(['super_admin', 'admin', 'manager', 'sales'])),
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => PermissionHelper::can('edit invoices')),
+                    ->visible(fn ($record) => PermissionHelper::can('invoices.update')),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => PermissionHelper::can('delete invoices')),
+                    ->visible(fn ($record) => PermissionHelper::can('invoices.delete')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => PermissionHelper::can('delete invoices')),
+                        ->visible(fn () => PermissionHelper::can('invoices.delete')),
                 ]),
             ]);
     }

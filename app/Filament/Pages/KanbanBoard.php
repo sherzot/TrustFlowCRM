@@ -31,7 +31,7 @@ class KanbanBoard extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        return PermissionHelper::can('view deals');
+        return PermissionHelper::can('deals.view');
     }
 
     public function getDealsByStage(): array

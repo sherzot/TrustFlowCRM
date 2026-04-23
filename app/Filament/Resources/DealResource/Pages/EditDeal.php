@@ -16,13 +16,13 @@ class EditDeal extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn () => PermissionHelper::can('delete deals')),
+                ->visible(fn () => PermissionHelper::can('deals.delete')),
         ];
     }
 
     public function canDelete(): bool
     {
-        return PermissionHelper::can('delete deals');
+        return PermissionHelper::can('deals.delete');
     }
 }
 

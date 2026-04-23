@@ -35,9 +35,29 @@ class User extends Authenticatable implements FilamentUser
         ];
     }
 
+    /**
+     * Only users with a known CRM role and an assigned tenant
+     * (or a Super Admin with no tenant) may enter the Filament panel.
+     *
+     * Role names match RoleSeeder.php — snake_case, not title case.
+     */
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        if ($this->hasRole('super_admin')) {
+            return true;
+        }
+
+        if ($this->tenant_id === null) {
+            return false;
+        }
+
+        return $this->hasAnyRole([
+            'admin',
+            'manager',
+            'sales',
+            'delivery',
+            'finance',
+        ]);
     }
 
     public function tenant()

@@ -44,17 +44,17 @@ class TaskResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return PermissionHelper::can('view tasks');
+        return PermissionHelper::can('tasks.view');
     }
 
     public static function canViewAny(): bool
     {
-        return PermissionHelper::can('view tasks');
+        return PermissionHelper::can('tasks.view');
     }
 
     public static function canCreate(): bool
     {
-        return PermissionHelper::can('create tasks');
+        return PermissionHelper::can('tasks.create');
     }
 
     public static function form(Form $form): Form
@@ -175,14 +175,14 @@ class TaskResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => PermissionHelper::can('edit tasks')),
+                    ->visible(fn ($record) => PermissionHelper::can('tasks.update')),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => PermissionHelper::can('delete tasks')),
+                    ->visible(fn ($record) => PermissionHelper::can('tasks.delete')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => PermissionHelper::can('delete tasks')),
+                        ->visible(fn () => PermissionHelper::can('tasks.delete')),
                 ]),
             ]);
     }

@@ -17,7 +17,7 @@ class ListAccounts extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(fn () => PermissionHelper::can('create accounts')),
+                ->visible(fn () => PermissionHelper::can('accounts.create')),
         ];
     }
 

@@ -43,7 +43,7 @@ class ContractResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return PermissionHelper::can('view deals');
+        return PermissionHelper::can('contracts.view');
     }
 
     public static function form(Form $form): Form

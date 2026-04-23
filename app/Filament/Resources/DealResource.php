@@ -45,17 +45,17 @@ class DealResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return PermissionHelper::can('view deals');
+        return PermissionHelper::can('deals.view');
     }
 
     public static function canViewAny(): bool
     {
-        return PermissionHelper::can('view deals');
+        return PermissionHelper::can('deals.view');
     }
 
     public static function canCreate(): bool
     {
-        return PermissionHelper::can('create deals');
+        return PermissionHelper::can('deals.create');
     }
 
     public static function form(Form $form): Form
@@ -196,7 +196,7 @@ class DealResource extends Resource
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->visible(fn ($record) => PermissionHelper::can('edit deals'))
+                    ->visible(fn ($record) => PermissionHelper::can('deals.update'))
                     ->action(function (Deal $record) {
                         $salesService = app(SalesService::class);
                         $salesService->winDeal($record);
@@ -206,7 +206,7 @@ class DealResource extends Resource
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->requiresConfirmation()
-                    ->visible(fn ($record) => PermissionHelper::can('edit deals'))
+                    ->visible(fn ($record) => PermissionHelper::can('deals.update'))
                     ->form([
                         Forms\Components\Textarea::make('reason')
                             ->label(__('filament.lost_reason'))
@@ -217,12 +217,12 @@ class DealResource extends Resource
                         $salesService->loseDeal($record, $data['reason']);
                     }),
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => PermissionHelper::can('edit deals')),
+                    ->visible(fn ($record) => PermissionHelper::can('deals.update')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => PermissionHelper::can('delete deals')),
+                        ->visible(fn () => PermissionHelper::can('deals.delete')),
                 ]),
             ]);
     }

@@ -28,13 +28,13 @@ class EditInvoice extends EditRecord
                 ->openUrlInNewTab()
                 ->visible(fn (): bool => PermissionHelper::hasAnyRole(['super_admin', 'admin', 'manager', 'sales'])),
             Actions\DeleteAction::make()
-                ->visible(fn () => PermissionHelper::can('delete invoices')),
+                ->visible(fn () => PermissionHelper::can('invoices.delete')),
         ];
     }
 
     public function canDelete(): bool
     {
-        return PermissionHelper::can('delete invoices');
+        return PermissionHelper::can('invoices.delete');
     }
 }
 

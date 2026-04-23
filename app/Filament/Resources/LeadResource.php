@@ -45,17 +45,17 @@ class LeadResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return PermissionHelper::can('view leads');
+        return PermissionHelper::can('leads.view');
     }
 
     public static function canViewAny(): bool
     {
-        return PermissionHelper::can('view leads');
+        return PermissionHelper::can('leads.view');
     }
 
     public static function canCreate(): bool
     {
-        return PermissionHelper::can('create leads');
+        return PermissionHelper::can('leads.create');
     }
 
     public static function form(Form $form): Form
@@ -174,20 +174,20 @@ class LeadResource extends Resource
                     ->label(__('filament.convert'))
                     ->icon('heroicon-o-arrow-right')
                     ->requiresConfirmation()
-                    ->visible(fn ($record) => PermissionHelper::can('edit leads'))
+                    ->visible(fn ($record) => PermissionHelper::can('leads.update'))
                     ->action(function (Lead $record) {
                         $salesService = app(SalesService::class);
                         $salesService->convertLead($record);
                     }),
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => PermissionHelper::can('edit leads')),
+                    ->visible(fn ($record) => PermissionHelper::can('leads.update')),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => PermissionHelper::can('delete leads')),
+                    ->visible(fn ($record) => PermissionHelper::can('leads.delete')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => PermissionHelper::can('delete leads')),
+                        ->visible(fn () => PermissionHelper::can('leads.delete')),
                 ]),
             ]);
     }

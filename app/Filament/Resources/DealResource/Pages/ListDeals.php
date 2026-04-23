@@ -16,7 +16,7 @@ class ListDeals extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(fn () => PermissionHelper::can('create deals')),
+                ->visible(fn () => PermissionHelper::can('deals.create')),
         ];
     }
 }

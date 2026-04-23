@@ -16,7 +16,7 @@ class ListTasks extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(fn () => PermissionHelper::can('create tasks')),
+                ->visible(fn () => PermissionHelper::can('tasks.create')),
         ];
     }
 }

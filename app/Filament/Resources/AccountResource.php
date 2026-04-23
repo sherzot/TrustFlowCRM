@@ -44,17 +44,17 @@ class AccountResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return PermissionHelper::can('view accounts');
+        return PermissionHelper::can('accounts.view');
     }
 
     public static function canViewAny(): bool
     {
-        return PermissionHelper::can('view accounts');
+        return PermissionHelper::can('accounts.view');
     }
 
     public static function canCreate(): bool
     {
-        return PermissionHelper::can('create accounts');
+        return PermissionHelper::can('accounts.create');
     }
 
     public static function form(Form $form): Form
@@ -160,14 +160,14 @@ class AccountResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => PermissionHelper::can('edit accounts')),
+                    ->visible(fn ($record) => PermissionHelper::can('accounts.update')),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => PermissionHelper::can('delete accounts')),
+                    ->visible(fn ($record) => PermissionHelper::can('accounts.delete')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => PermissionHelper::can('delete accounts')),
+                        ->visible(fn () => PermissionHelper::can('accounts.delete')),
                 ]),
             ]);
     }

@@ -16,7 +16,7 @@ class ListLeads extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(fn () => PermissionHelper::can('create leads')),
+                ->visible(fn () => PermissionHelper::can('leads.create')),
         ];
     }
 }
