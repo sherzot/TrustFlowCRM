@@ -1,3 +1,16 @@
+# TrustFlow CRM - local development stack
+# Usage:
+#   docker compose up -d --build
+#   docker compose exec app php artisan migrate --seed
+#
+# Services:
+#   app       PHP-FPM + nginx + (optional) horizon via supervisord
+#   db        MySQL 8.0
+#   redis     Cache + queue + broadcasting
+#   mailpit   Outgoing mail sink for local dev (http://localhost:8025)
+#   reverb    Laravel Reverb websocket server (optional)
+#   adminer   DB browser (http://localhost:8081)
+
 services:
   app:
     build:
@@ -7,37 +20,47 @@ services:
     container_name: trustflow-crm-app
     restart: unless-stopped
     working_dir: /var/www/html
+    environment:
+      RUN_HORIZON: "true"
+      RUN_SCHEDULER: "true"
     volumes:
-      - ./:/var/www/html
-      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      # ----------------------------------------------------------------------
+      # NOTE on code mounts (macOS):
+      # We deliberately do NOT bind-mount the source tree ("./:/var/www/html").
+      # Docker Desktop's VirtioFS on macOS intermittently produces
+      # `errno=35 Resource deadlock avoided` when multiple processes inside
+      # the container (nginx, php-fpm, horizon, scheduler) touch the same
+      # files. The image is the source of truth — rebuild after code edits:
+      #     docker compose up -d --build
+      # ----------------------------------------------------------------------
+      - ./.env:/var/www/html/.env
+      - storage_data:/var/www/html/storage
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/zz-trustflow.ini
+      - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/supervisord.conf:/etc/supervisor/conf.d/trustflow.conf
+    ports:
+      # Host port set to 18080 to avoid any collision with locally-running
+      # services (Java/Tomcat on 8080, etc.). Container still listens on 8080.
+      - "18080:8080"
     networks:
       - trustflow-network
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
     extra_hosts:
       - "host.docker.internal:host-gateway"
-
-  nginx:
-    image: nginx:alpine
-    container_name: trustflow-crm-nginx
-    restart: unless-stopped
-    ports:
-      - "8080:80"
-    volumes:
-      - ./:/var/www/html
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      - trustflow-network
-    depends_on:
-      - app
 
   db:
     image: mysql:8.0
     container_name: trustflow-crm-db
     restart: unless-stopped
+    # Bound to 127.0.0.1:13306 so a local MySQL on 3306 is not disturbed.
+    # The app reaches MySQL via the docker network as `db:3306`.
     ports:
-      - "3306:3306"
+      - "127.0.0.1:13306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: trustflow_crm
@@ -46,6 +69,11 @@ services:
     volumes:
       - dbdata:/var/lib/mysql
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     networks:
       - trustflow-network
 
@@ -53,31 +81,59 @@ services:
     image: redis:7-alpine
     container_name: trustflow-crm-redis
     restart: unless-stopped
+    # Bound to 127.0.0.1:16379 so a local Redis on 6379 is not disturbed.
+    # The app reaches Redis via the docker network as `redis:6379`.
     ports:
-      - "6379:6379"
+      - "127.0.0.1:16379:6379"
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "allkeys-lru"]
     volumes:
       - redisdata:/data
     networks:
       - trustflow-network
 
-  horizon:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: trustflow-crm-mailpit
+    restart: unless-stopped
+    ports:
+      # SMTP is only used by the app container over the docker network;
+      # we still bind to 127.0.0.1 (not 0.0.0.0) for safety and on a high port.
+      - "127.0.0.1:11025:1025"   # SMTP
+      - "18025:8025"             # UI — http://localhost:18025
+    networks:
+      - trustflow-network
+
+  adminer:
+    image: adminer:4
+    container_name: trustflow-crm-adminer
+    restart: unless-stopped
+    ports:
+      # http://localhost:18081  (moved off 8081 to avoid host collisions)
+      - "18081:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    networks:
+      - trustflow-network
+    depends_on:
+      - db
+
+  reverb:
     image: trustflow-crm:latest
-    container_name: trustflow-crm-horizon
+    container_name: trustflow-crm-reverb
     restart: unless-stopped
     working_dir: /var/www/html
-    command: php artisan horizon
+    command: php artisan reverb:start --host=0.0.0.0 --port=8080
     volumes:
-      - ./:/var/www/html
+      - ./.env:/var/www/html/.env
+      - storage_data:/var/www/html/storage
+    ports:
+      - "18090:8080"
     networks:
       - trustflow-network
     depends_on:
       - app
       - redis
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    profiles: ["ws"]   # opt-in: `docker compose --profile ws up`
 
 networks:
   trustflow-network:
@@ -88,4 +144,5 @@ volumes:
     driver: local
   redisdata:
     driver: local
-
+  storage_data:
+    driver: local

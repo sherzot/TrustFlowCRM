@@ -1,0 +1,24 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 6
+    paths:
+        - app
+        - config
+        - database/factories
+        - database/seeders
+
+    excludePaths:
+        - app/Console/Kernel.php
+        - app/Exceptions/Handler.php
+
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    treatPhpDocTypesAsCertain: false
+
+    ignoreErrors:
+        # Eloquent dynamic properties (IDE helper handles these).
+        - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model#'
+        # Laravel facade return-types are often mixed.
+        - '#Call to an undefined method Illuminate\\Support\\Facades#'

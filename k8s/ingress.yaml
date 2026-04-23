@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: trustflow-web
+  namespace: trustflow
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "40m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - crm.example.com
+      secretName: trustflow-web-tls
+  rules:
+    - host: crm.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: trustflow-web
+                port:
+                  number: 80
