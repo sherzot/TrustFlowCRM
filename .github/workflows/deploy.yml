@@ -1,0 +1,342 @@
+# ============================================================================
+# TrustFlow CRM — Unified CI/CD Pipeline
+#
+# Pipeline order (Sher's requirement):
+#     git push origin main
+#         │
+#         ▼
+#     ┌───────────────────────────────────────────────────────────┐
+#     │ JOB 1 — test       (ubuntu-latest, cloud)                 │
+#     │   PHPUnit + MySQL 8 + Redis 7 services                    │
+#     └───────────────────────────────────────────────────────────┘
+#         │ if green
+#         ▼
+#     ┌───────────────────────────────────────────────────────────┐
+#     │ JOB 2 — build      (ubuntu-latest, cloud)                 │
+#     │   Docker Buildx → sherdev/trustflow-crm:{latest, sha-XXX} │
+#     └───────────────────────────────────────────────────────────┘
+#         │ if green
+#         ▼
+#     ┌───────────────────────────────────────────────────────────┐
+#     │ JOB 3 — deploy     (self-hosted, macOS, ARM64)            │
+#     │   kubectl apply -k k8s/  →  http://localhost:30080/up     │
+#     └───────────────────────────────────────────────────────────┘
+#
+# Secrets required (GitHub → Settings → Secrets and variables → Actions):
+#     DOCKER_USERNAME     sherdev
+#     DOCKER_PASSWORD     <Docker Hub access token>
+#
+# Self-hosted runner: installed on Sher's Mac (labels: self-hosted, macOS, ARM64)
+# ============================================================================
+
+name: CI/CD — Test → Build → Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ==========================================================================
+  # JOB 1 — Test
+  # ==========================================================================
+  test:
+    name: Test (PHPUnit)
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: trustflow_test
+          MYSQL_USER: trustflow
+          MYSQL_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql, redis, bcmath, intl, zip, gd, exif, pcntl
+          coverage: none
+          tools: composer:v2
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Copy .env.testing
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Wait for MySQL
+        run: |
+          for i in $(seq 1 30); do
+            if mysqladmin ping -h 127.0.0.1 -P 3306 -uroot -proot --silent; then
+              echo "MySQL is ready"; exit 0
+            fi
+            echo "Waiting for MySQL... ($i/30)"; sleep 2
+          done
+          echo "MySQL did not become ready"; exit 1
+
+      - name: Run migrations
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: trustflow_test
+          DB_USERNAME: trustflow
+          DB_PASSWORD: root
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: 6379
+          CACHE_STORE: array
+          QUEUE_CONNECTION: sync
+          SESSION_DRIVER: array
+        run: php artisan migrate --force
+
+      - name: Run PHPUnit
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: trustflow_test
+          DB_USERNAME: trustflow
+          DB_PASSWORD: root
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: 6379
+          CACHE_STORE: array
+          QUEUE_CONNECTION: sync
+          SESSION_DRIVER: array
+        run: |
+          if [ -f artisan ]; then
+            php artisan test --without-tty || php -d memory_limit=512M ./vendor/bin/phpunit
+          fi
+        continue-on-error: false
+
+  # ==========================================================================
+  # JOB 2 — Build & Push to Docker Hub
+  # ==========================================================================
+  build:
+    name: Build & Push (Docker Hub)
+    needs: test
+    runs-on: ubuntu-latest
+    # Only push on main branch or manual dispatch — not on PRs from forks.
+    if: github.event_name != 'pull_request'
+
+    outputs:
+      image-tag: ${{ steps.meta.outputs.image-tag }}
+      sha-short: ${{ steps.meta.outputs.sha-short }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute image tags
+        id: meta
+        run: |
+          SHA_SHORT=$(echo "${{ github.sha }}" | cut -c1-7)
+          echo "sha-short=${SHA_SHORT}" >> "$GITHUB_OUTPUT"
+          echo "image-tag=sherdev/trustflow-crm:sha-${SHA_SHORT}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build & push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: |
+            sherdev/trustflow-crm:latest
+            sherdev/trustflow-crm:sha-${{ steps.meta.outputs.sha-short }}
+          cache-from: type=registry,ref=sherdev/trustflow-crm:buildcache
+          cache-to: type=registry,ref=sherdev/trustflow-crm:buildcache,mode=max
+          build-args: |
+            INSTALL_DEV=false
+
+  # ==========================================================================
+  # JOB 3 — Deploy to Docker Desktop Kubernetes (self-hosted runner)
+  # ==========================================================================
+  deploy:
+    name: Deploy (docker-desktop K8s)
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, macOS, ARM64]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sanity — tools & cluster
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "::group::Versions"
+          kubectl version --client=true
+          docker --version
+          echo "::endgroup::"
+
+          echo "::group::Cluster"
+          kubectl config current-context
+          kubectl cluster-info || true
+          echo "::endgroup::"
+
+          CTX=$(kubectl config current-context)
+          if [ "$CTX" != "docker-desktop" ]; then
+            echo "Current kube-context is '$CTX', expected 'docker-desktop'."
+            echo "Switching…"
+            kubectl config use-context docker-desktop
+          fi
+
+      - name: Ensure namespace + secrets exist
+        shell: bash
+        env:
+          APP_KEY_BOOTSTRAP: ${{ secrets.APP_KEY }}
+          DB_PASSWORD_BOOTSTRAP: ${{ secrets.K8S_DB_PASSWORD }}
+          OPENAI_API_KEY_BOOTSTRAP: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          set -euo pipefail
+
+          kubectl apply -f k8s/namespace.yaml
+
+          # Create secrets only if they don't already exist. Values are supplied
+          # from GitHub secrets (see docs/deployment/cicd.md). Defaults below are
+          # LOCAL-ONLY fallbacks so first-time deploy does not fail — rotate them
+          # before any non-localhost use.
+          APP_KEY="${APP_KEY_BOOTSTRAP:-base64:$(head -c 32 /dev/urandom | base64)}"
+          DB_PASSWORD="${DB_PASSWORD_BOOTSTRAP:-trustflow_local_pw}"
+          OPENAI_API_KEY="${OPENAI_API_KEY_BOOTSTRAP:-sk-local-placeholder}"
+
+          if ! kubectl -n trustflow get secret trustflow-secrets >/dev/null 2>&1; then
+            kubectl -n trustflow create secret generic trustflow-secrets \
+              --from-literal=APP_KEY="${APP_KEY}" \
+              --from-literal=DB_USERNAME="trustflow" \
+              --from-literal=DB_PASSWORD="${DB_PASSWORD}" \
+              --from-literal=OPENAI_API_KEY="${OPENAI_API_KEY}"
+          fi
+
+          if ! kubectl -n trustflow get secret mysql-secrets >/dev/null 2>&1; then
+            kubectl -n trustflow create secret generic mysql-secrets \
+              --from-literal=MYSQL_ROOT_PASSWORD="${DB_PASSWORD}" \
+              --from-literal=MYSQL_USER="trustflow" \
+              --from-literal=MYSQL_PASSWORD="${DB_PASSWORD}" \
+              --from-literal=MYSQL_DATABASE="trustflow_crm"
+          fi
+
+      - name: Apply manifests (kustomize)
+        shell: bash
+        run: |
+          set -euo pipefail
+          kubectl apply -k k8s/
+          kubectl -n trustflow get all
+
+      - name: Pin image to just-built tag
+        shell: bash
+        env:
+          SHA_SHORT: ${{ needs.build.outputs.sha-short }}
+        run: |
+          set -euo pipefail
+          IMAGE="sherdev/trustflow-crm:sha-${SHA_SHORT}"
+          echo "Rolling trustflow-web to ${IMAGE}"
+          kubectl -n trustflow set image deployment/trustflow-web app="${IMAGE}"
+
+      - name: Wait for rollout
+        shell: bash
+        run: |
+          set -euo pipefail
+          kubectl -n trustflow rollout status deployment/trustflow-web --timeout=300s
+          kubectl -n trustflow get pods -o wide
+
+      - name: Run migrations (Job)
+        shell: bash
+        env:
+          SHA_SHORT: ${{ needs.build.outputs.sha-short }}
+        run: |
+          set -euo pipefail
+          IMAGE="sherdev/trustflow-crm:sha-${SHA_SHORT}"
+          # Re-run the migration Job with the just-built image.
+          kubectl -n trustflow delete job trustflow-migrate --ignore-not-found
+          # Patch the image in the template before applying.
+          sed "s#IMAGE_PLACEHOLDER#${IMAGE}#g" k8s/migration-job.yaml | kubectl apply -f -
+          kubectl -n trustflow wait --for=condition=complete --timeout=300s job/trustflow-migrate || {
+            echo "Migration Job logs:"
+            kubectl -n trustflow logs job/trustflow-migrate --tail=200 || true
+            exit 1
+          }
+          kubectl -n trustflow logs job/trustflow-migrate --tail=100 || true
+
+      - name: Smoke test (localhost:30080/up)
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 20); do
+            if curl -fsS --max-time 5 http://localhost:30080/up >/dev/null; then
+              echo "App is healthy at http://localhost:30080/up"
+              exit 0
+            fi
+            echo "Waiting for app… ($i/20)"
+            sleep 3
+          done
+          echo "App did not respond in time."
+          kubectl -n trustflow describe deployment/trustflow-web || true
+          kubectl -n trustflow logs deployment/trustflow-web --tail=100 || true
+          exit 1
+
+      - name: Deployment summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## TrustFlow CRM Deploy Summary"
+            echo ""
+            echo "| Item | Value |"
+            echo "| --- | --- |"
+            echo "| Commit | \`${{ github.sha }}\` |"
+            echo "| Image  | \`sherdev/trustflow-crm:sha-${{ needs.build.outputs.sha-short }}\` |"
+            echo "| URL    | http://localhost:30080 |"
+            echo ""
+            echo "### Pods"
+            kubectl -n trustflow get pods -o wide 2>/dev/null || true
+          } >> "$GITHUB_STEP_SUMMARY"

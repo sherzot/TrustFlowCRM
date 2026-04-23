@@ -1,0 +1,26 @@
+# ----------------------------------------------------------------------------
+# TrustFlow CRM — Kustomize base (Docker Desktop local K8s)
+#
+# Apply with:
+#     kubectl apply -k k8s/
+#
+# The migration Job (k8s/migration-job.yaml) is NOT included here — it is
+# applied separately by deploy.yml after patching the image tag, because Jobs
+# are immutable once created.
+# ----------------------------------------------------------------------------
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: trustflow
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - mysql.yaml
+  - redis.yaml
+  - deployment.yaml
+  - service.yaml
+
+commonLabels:
+  app.kubernetes.io/part-of: trustflow-crm
+  app.kubernetes.io/managed-by: kustomize

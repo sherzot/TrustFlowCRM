@@ -1,13 +1,23 @@
+# ----------------------------------------------------------------------------
+# TrustFlow CRM — app Service (Docker Desktop local Kubernetes)
+#
+# NodePort 30080 is exposed on the host — reachable at http://localhost:30080.
+# For staging / prod, switch to ClusterIP + Ingress (see k8s/ingress.yaml).
+# ----------------------------------------------------------------------------
 apiVersion: v1
 kind: Service
 metadata:
   name: trustflow-web
   namespace: trustflow
+  labels:
+    app.kubernetes.io/name: trustflow-web
+    app.kubernetes.io/part-of: trustflow-crm
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app.kubernetes.io/name: trustflow-web
   ports:
     - name: http
       port: 80
       targetPort: 8080
+      nodePort: 30080
