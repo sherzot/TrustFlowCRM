@@ -100,12 +100,15 @@ class AnalyticsService
 
         $highScoreLeads = $highScoreLeadsQuery->count();
         $highScoreDeals = $highScoreDealsQuery->count();
-        $avgDealValue = $avgDealValueQuery->avg('value');
+
+        // Eloquent returns DECIMAL aggregates as strings on MySQL (e.g.
+        // "12345.67"). PHP 8.2+ round() rejects strings, so cast to float.
+        $avgDealValue = (float) ($avgDealValueQuery->avg('value') ?? 0);
 
         return [
             'high_score_leads' => $highScoreLeads,
             'high_score_deals' => $highScoreDeals,
-            'average_deal_value' => round($avgDealValue ?? 0, 2),
+            'average_deal_value' => round($avgDealValue, 2),
             'conversion_rate' => $this->calculateConversionRate($tenantId),
         ];
     }
