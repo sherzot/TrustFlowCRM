@@ -194,10 +194,12 @@ jobs:
           echo "sha-short=${SHA_SHORT}" >> "$GITHUB_OUTPUT"
           echo "image-tag=sherdev/trustflow-crm:sha-${SHA_SHORT}" >> "$GITHUB_OUTPUT"
 
-      # QEMU lets an amd64 runner emulate arm64 during the build so the
-      # resulting image manifest covers both platforms. Required because
-      # the deploy target is an Apple Silicon Mac (linux/arm64) while the
-      # runner is ubuntu-latest (linux/amd64).
+      # QEMU lets the amd64 cloud runner emulate arm64 during the build. We
+      # build ONLY linux/arm64 because the deploy target is Docker Desktop
+      # Kubernetes on Apple Silicon (arm64 node). Building amd64 as well
+      # pushed end-to-end time past 50 minutes for marginal value — drop it.
+      # If a linux/amd64 target is added later (staging/prod), switch to:
+      #   platforms: linux/amd64,linux/arm64
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -210,12 +212,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build & push (multi-arch)
+      - name: Build & push (linux/arm64)
         uses: docker/build-push-action@v5
         with:
           context: .
           file: Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/arm64
           push: true
           tags: |
             sherdev/trustflow-crm:latest
@@ -326,16 +328,49 @@ jobs:
         run: |
           set -euo pipefail
           IMAGE="sherdev/trustflow-crm:sha-${SHA_SHORT}"
-          # Re-run the migration Job with the just-built image.
+          # Clean up any previous run and apply the Job template with the
+          # just-built image tag sed-substituted in.
           kubectl -n trustflow delete job trustflow-migrate --ignore-not-found
-          # Patch the image in the template before applying.
           sed "s#IMAGE_PLACEHOLDER#${IMAGE}#g" k8s/migration-job.yaml | kubectl apply -f -
-          kubectl -n trustflow wait --for=condition=complete --timeout=300s job/trustflow-migrate || {
-            echo "Migration Job logs:"
-            kubectl -n trustflow logs job/trustflow-migrate --tail=200 || true
-            exit 1
+
+          # We race two kubectl waits: one for success (complete), one for
+          # failure. Whichever returns first wins, with a 5-minute ceiling.
+          # This avoids the classic 1h+ hang when the Job is in ImagePullBackOff
+          # or crash-looping — we want a loud failure fast, not a silent wait.
+          dump_diagnostics() {
+            echo "::group::Job description"
+            kubectl -n trustflow describe job/trustflow-migrate || true
+            echo "::endgroup::"
+            echo "::group::Job pods"
+            kubectl -n trustflow get pods -l app.kubernetes.io/name=trustflow-migrate -o wide || true
+            echo "::endgroup::"
+            echo "::group::Pod describe (first matching pod)"
+            POD=$(kubectl -n trustflow get pods -l app.kubernetes.io/name=trustflow-migrate -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || true)
+            if [ -n "${POD:-}" ]; then
+              kubectl -n trustflow describe pod "$POD" || true
+              echo "--- init logs ---"
+              kubectl -n trustflow logs "$POD" -c wait-for-mysql --tail=200 || true
+              echo "--- migrate logs ---"
+              kubectl -n trustflow logs "$POD" -c migrate --tail=400 || true
+            else
+              echo "no pod found yet"
+            fi
+            echo "::endgroup::"
+            echo "::group::Recent namespace events"
+            kubectl -n trustflow get events --sort-by=.lastTimestamp --field-selector involvedObject.name=trustflow-migrate || true
+            echo "::endgroup::"
           }
-          kubectl -n trustflow logs job/trustflow-migrate --tail=100 || true
+
+          # Hard ceiling — if wait hangs for any reason, timeout kills it.
+          if timeout 330 kubectl -n trustflow wait --for=condition=complete --timeout=300s job/trustflow-migrate; then
+            echo "Migration Job completed successfully."
+            kubectl -n trustflow logs job/trustflow-migrate --tail=100 || true
+            exit 0
+          fi
+
+          echo "::error::Migration Job did not complete — dumping diagnostics."
+          dump_diagnostics
+          exit 1
 
       - name: Smoke test (localhost:30080/up)
         shell: bash
