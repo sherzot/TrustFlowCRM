@@ -21,7 +21,7 @@
 # ----------------------------------------------------------------------------
 set -euo pipefail
 
-BUNDLE="$(git rev-parse --show-toplevel)/.trustflow-push-v4.bundle"
+BUNDLE="$(git rev-parse --show-toplevel)/.trustflow-push-v6.bundle"
 if [ ! -f "$BUNDLE" ]; then
     echo "ERROR: bundle not found at $BUNDLE"
     echo "Make sure you're in the TrustFlowCRM repo root."
