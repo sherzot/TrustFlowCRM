@@ -17,8 +17,14 @@ use Illuminate\Support\Facades\Log;
  *
  * Cost pricing (per 1K tokens) is pulled from config/ai.php so it can be tuned
  * per deployment without code changes.
+ *
+ * NOTE: intentionally NOT `final`. Tests (Tests\Unit\AIServiceTest) build a
+ * Mockery mock of this class to isolate the AI service from the DB, and
+ * Mockery cannot replace methods on `final` classes. Keeping the class
+ * extendable is a test-only concession; production code should not subclass
+ * it.
  */
-final class AiCallLogger
+class AiCallLogger
 {
     /**
      * @param  array<string, mixed>|null  $response
