@@ -376,22 +376,56 @@ jobs:
           dump_diagnostics
           exit 1
 
-      - name: Smoke test (localhost:30080/up)
+      - name: Smoke test (via port-forward)
         shell: bash
         run: |
           set -euo pipefail
+          # Docker Desktop's Kubernetes does NOT reliably expose NodePort
+          # services on localhost from the Mac host (it's a long-standing
+          # networking quirk — NodePort binds inside the VM but the port
+          # mapping back to the host is flaky, especially right after the
+          # Service is recreated). Our endpoints are populated and the
+          # Service is healthy in-cluster, so we smoke-test via a
+          # short-lived port-forward instead of via the NodePort.
+          #
+          # This is also more reliable for CI: it tests the Service, not
+          # just the Pod, and works on any runner regardless of how the
+          # host exposes NodePorts.
+          kubectl -n trustflow port-forward svc/trustflow-web 38080:80 \
+            >/tmp/pf.log 2>&1 &
+          PF_PID=$!
+          trap 'kill "$PF_PID" 2>/dev/null || true' EXIT
+
+          # Give port-forward a moment to establish the listener.
+          for i in $(seq 1 10); do
+            if lsof -i :38080 -sTCP:LISTEN >/dev/null 2>&1; then
+              echo "port-forward ready after ${i} check(s)"
+              break
+            fi
+            sleep 1
+          done
+
+          OK=0
           for i in $(seq 1 20); do
-            if curl -fsS --max-time 5 http://localhost:30080/up >/dev/null; then
-              echo "App is healthy at http://localhost:30080/up"
-              exit 0
+            if curl -fsS --max-time 5 http://127.0.0.1:38080/up >/dev/null; then
+              echo "App is healthy via port-forward (svc/trustflow-web:80)"
+              OK=1
+              break
             fi
             echo "Waiting for app… ($i/20)"
             sleep 3
           done
-          echo "App did not respond in time."
-          kubectl -n trustflow describe deployment/trustflow-web || true
-          kubectl -n trustflow logs deployment/trustflow-web --tail=100 || true
-          exit 1
+
+          if [ "$OK" -ne 1 ]; then
+            echo "::error::App did not respond via port-forward."
+            echo "--- port-forward log ---"
+            cat /tmp/pf.log || true
+            echo "--- deployment ---"
+            kubectl -n trustflow describe deployment/trustflow-web || true
+            echo "--- web pod logs ---"
+            kubectl -n trustflow logs deployment/trustflow-web --tail=150 || true
+            exit 1
+          fi
 
       - name: Deployment summary
         if: always()
@@ -404,7 +438,11 @@ jobs:
             echo "| --- | --- |"
             echo "| Commit | \`${{ github.sha }}\` |"
             echo "| Image  | \`sherdev/trustflow-crm:sha-${{ needs.build.outputs.sha-short }}\` |"
-            echo "| URL    | http://localhost:30080 |"
+            echo "| URL    | \`kubectl -n trustflow port-forward svc/trustflow-web 30080:80\` → http://localhost:30080 |"
+            echo ""
+            echo "> Docker Desktop's NodePort binding is flaky on macOS, so"
+            echo "> the app is most reliably reached by running a"
+            echo "> port-forward on the deploy host. See \`scripts/pf.sh\`."
             echo ""
             echo "### Pods"
             kubectl -n trustflow get pods -o wide 2>/dev/null || true
