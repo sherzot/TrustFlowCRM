@@ -333,10 +333,10 @@ jobs:
           kubectl -n trustflow delete job trustflow-migrate --ignore-not-found
           sed "s#IMAGE_PLACEHOLDER#${IMAGE}#g" k8s/migration-job.yaml | kubectl apply -f -
 
-          # We race two kubectl waits: one for success (complete), one for
-          # failure. Whichever returns first wins, with a 5-minute ceiling.
-          # This avoids the classic 1h+ hang when the Job is in ImagePullBackOff
-          # or crash-looping — we want a loud failure fast, not a silent wait.
+          # kubectl wait has its own --timeout, so the Job can never hang
+          # longer than 5 minutes. If the wait fails (timeout or failed
+          # condition) we dump full diagnostics before exiting so the root
+          # cause is always visible in the Actions UI.
           dump_diagnostics() {
             echo "::group::Job description"
             kubectl -n trustflow describe job/trustflow-migrate || true
@@ -361,8 +361,12 @@ jobs:
             echo "::endgroup::"
           }
 
-          # Hard ceiling — if wait hangs for any reason, timeout kills it.
-          if timeout 330 kubectl -n trustflow wait --for=condition=complete --timeout=300s job/trustflow-migrate; then
+          # Note: do NOT wrap this in GNU `timeout` — macOS self-hosted
+          # runners don't ship coreutils by default, and a missing
+          # `timeout` command caused an earlier run to false-fail a
+          # perfectly healthy Migration Job after 3 seconds.
+          # `kubectl wait --timeout=300s` is sufficient on its own.
+          if kubectl -n trustflow wait --for=condition=complete --timeout=300s job/trustflow-migrate; then
             echo "Migration Job completed successfully."
             kubectl -n trustflow logs job/trustflow-migrate --tail=100 || true
             exit 0
