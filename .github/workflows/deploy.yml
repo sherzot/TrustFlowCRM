@@ -1,35 +1,44 @@
 # ============================================================================
-# TrustFlow CRM — Unified CI/CD Pipeline
+# TrustFlow CRM — CI/CD (v9, lightweight)
 #
-# Pipeline order (Sher's requirement):
+# Pipeline:
 #     git push origin main
 #         │
 #         ▼
 #     ┌───────────────────────────────────────────────────────────┐
-#     │ JOB 1 — test       (ubuntu-latest, cloud)                 │
-#     │   PHPUnit + MySQL 8 + Redis 7 services                    │
+#     │ JOB 1 — test     (ubuntu-latest, cloud)                   │
+#     │   PHPUnit + MySQL 8 + Redis 7 — informational (see note)  │
 #     └───────────────────────────────────────────────────────────┘
-#         │ if green
+#         │ if green (or forced)
 #         ▼
 #     ┌───────────────────────────────────────────────────────────┐
-#     │ JOB 2 — build      (ubuntu-latest, cloud)                 │
-#     │   Docker Buildx → sherdev/trustflow-crm:{latest, sha-XXX} │
-#     └───────────────────────────────────────────────────────────┘
-#         │ if green
-#         ▼
-#     ┌───────────────────────────────────────────────────────────┐
-#     │ JOB 3 — deploy     (self-hosted, macOS, ARM64)            │
-#     │   kubectl apply -k k8s/  →  http://localhost:30080/up     │
+#     │ JOB 2 — build    (ubuntu-latest, cloud)                   │
+#     │   Docker build (linux/amd64) → push to GHCR               │
+#     │   tags: :latest  :main  :sha-<short>                      │
 #     └───────────────────────────────────────────────────────────┘
 #
-# Secrets required (GitHub → Settings → Secrets and variables → Actions):
-#     DOCKER_USERNAME     sherdev
-#     DOCKER_PASSWORD     <Docker Hub access token>
+# Registry:  ghcr.io/sherzot/trustflowcrm
+# Auth:      GITHUB_TOKEN (no secret setup needed — the workflow
+#            declares `permissions: packages: write`)
 #
-# Self-hosted runner: installed on Sher's Mac (labels: self-hosted, macOS, ARM64)
+# LOCAL DEVELOPMENT (unchanged):
+#     docker compose up -d --build
+#     open http://localhost:18080
+#
+# PRODUCTION DEPLOY (future — cloud VM / VPS / Railway / Fly):
+#     git clone + cp .env.production.example .env.production
+#     bash scripts/deploy.sh
+#
+# HISTORICAL NOTE:
+# The earlier self-hosted macOS runner + Docker Desktop Kubernetes deploy
+# job has been retired. Running K8s on Docker Desktop for a single-dev,
+# local-target project cost more in CI flakiness than it returned in
+# value. The k8s/ manifests and scripts/pf.sh are preserved in the tree
+# for reference if/when a real K8s target (EKS / GKE / DOKS) appears,
+# but they are no longer exercised by CI. See docs/deployment/overview.md.
 # ============================================================================
 
-name: CI/CD — Test → Build → Deploy
+name: CI/CD — Test + Build
 
 on:
   push:
@@ -39,12 +48,20 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: deploy-${{ github.ref }}
+  group: cicd-${{ github.ref }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_REPO: ${{ github.repository }}   # sherzot/TrustFlowCRM — lowercased inside build job
 
 jobs:
   # ==========================================================================
-  # JOB 1 — Test
+  # JOB 1 — Test (PHPUnit)
   # ==========================================================================
   test:
     name: Test (PHPUnit)
@@ -129,12 +146,11 @@ jobs:
           SESSION_DRIVER: array
         run: php artisan migrate --force
 
-      # NOTE (2026-04-24): The test suite is still being stabilised. Until it
-      # is fully wired up we keep the job green-informational:
-      #   * run the tests so results show up in the Actions log / summary
-      #   * do NOT gate build + deploy on the outcome
-      # Track hardening in the backlog — target: block deploys on test fail
-      # once coverage is reliable (see docs/deployment/cicd.md).
+      # NOTE: test suite is still being stabilised. Until it is fully
+      # reliable we keep PHPUnit green-informational — results show up in
+      # the Actions log / job summary, but build is NOT gated on it.
+      # Re-enable the gate by removing `continue-on-error: true` below
+      # once the suite is trustworthy.
       - name: Run PHPUnit (informational)
         id: phpunit
         continue-on-error: true
@@ -165,285 +181,96 @@ jobs:
             else
               echo ":warning: PHPUnit failed (non-blocking — see job log)."
               echo ""
-              echo "Build + Deploy were NOT blocked. Harden the suite to re-enable the gate."
+              echo "Build was NOT blocked. Harden the suite to re-enable the gate."
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
   # ==========================================================================
-  # JOB 2 — Build & Push to Docker Hub
+  # JOB 2 — Build & Push to GHCR
   # ==========================================================================
   build:
-    name: Build & Push (Docker Hub)
+    name: Build & Push (GHCR)
     needs: test
     runs-on: ubuntu-latest
-    # Only push on main branch or manual dispatch — not on PRs from forks.
+    # Only publish on main + workflow_dispatch — never on PRs from forks.
     if: github.event_name != 'pull_request'
 
     outputs:
-      image-tag: ${{ steps.meta.outputs.image-tag }}
+      image: ${{ steps.meta.outputs.image }}
       sha-short: ${{ steps.meta.outputs.sha-short }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Compute image tags
+      - name: Compute image metadata
         id: meta
         run: |
           SHA_SHORT=$(echo "${{ github.sha }}" | cut -c1-7)
+          # GHCR requires lowercase image names; repo slugs may be mixed-case.
+          IMAGE="${REGISTRY}/${IMAGE_REPO,,}"
           echo "sha-short=${SHA_SHORT}" >> "$GITHUB_OUTPUT"
-          echo "image-tag=sherdev/trustflow-crm:sha-${SHA_SHORT}" >> "$GITHUB_OUTPUT"
-
-      # QEMU lets the amd64 cloud runner emulate arm64 during the build. We
-      # build ONLY linux/arm64 because the deploy target is Docker Desktop
-      # Kubernetes on Apple Silicon (arm64 node). Building amd64 as well
-      # pushed end-to-end time past 50 minutes for marginal value — drop it.
-      # If a linux/amd64 target is added later (staging/prod), switch to:
-      #   platforms: linux/amd64,linux/arm64
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+          echo "image=${IMAGE}"         >> "$GITHUB_OUTPUT"
+          echo "Image: ${IMAGE}"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to Docker Hub
+      - name: Login to GHCR
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build & push (linux/arm64)
+      # linux/amd64 only — every mainstream cloud target (AWS EC2/ECS,
+      # Railway, Fly.io default, DigitalOcean, most VPS) runs amd64. Local
+      # dev on Apple Silicon uses `docker compose up --build`, which
+      # builds natively (arm64) without needing this image. If an arm64
+      # cloud target appears, add `linux/arm64` to platforms — expect the
+      # build to take 4-5x longer because of QEMU emulation.
+      - name: Build & push (linux/amd64)
         uses: docker/build-push-action@v5
         with:
           context: .
           file: Dockerfile
-          platforms: linux/arm64
+          platforms: linux/amd64
           push: true
           tags: |
-            sherdev/trustflow-crm:latest
-            sherdev/trustflow-crm:sha-${{ steps.meta.outputs.sha-short }}
-          cache-from: type=registry,ref=sherdev/trustflow-crm:buildcache
-          cache-to: type=registry,ref=sherdev/trustflow-crm:buildcache,mode=max
+            ${{ steps.meta.outputs.image }}:latest
+            ${{ steps.meta.outputs.image }}:main
+            ${{ steps.meta.outputs.image }}:sha-${{ steps.meta.outputs.sha-short }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           provenance: false
           build-args: |
             INSTALL_DEV=false
 
-  # ==========================================================================
-  # JOB 3 — Deploy to Docker Desktop Kubernetes (self-hosted runner)
-  # ==========================================================================
-  deploy:
-    name: Deploy (docker-desktop K8s)
-    needs: build
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    runs-on: [self-hosted, macOS, ARM64]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Sanity — tools & cluster
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "::group::Versions"
-          kubectl version --client=true
-          docker --version
-          echo "::endgroup::"
-
-          echo "::group::Cluster"
-          kubectl config current-context
-          kubectl cluster-info || true
-          echo "::endgroup::"
-
-          CTX=$(kubectl config current-context)
-          if [ "$CTX" != "docker-desktop" ]; then
-            echo "Current kube-context is '$CTX', expected 'docker-desktop'."
-            echo "Switching…"
-            kubectl config use-context docker-desktop
-          fi
-
-      - name: Ensure namespace + secrets exist
-        shell: bash
-        env:
-          APP_KEY_BOOTSTRAP: ${{ secrets.APP_KEY }}
-          DB_PASSWORD_BOOTSTRAP: ${{ secrets.K8S_DB_PASSWORD }}
-          OPENAI_API_KEY_BOOTSTRAP: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          set -euo pipefail
-
-          kubectl apply -f k8s/namespace.yaml
-
-          # Create secrets only if they don't already exist. Values are supplied
-          # from GitHub secrets (see docs/deployment/cicd.md). Defaults below are
-          # LOCAL-ONLY fallbacks so first-time deploy does not fail — rotate them
-          # before any non-localhost use.
-          APP_KEY="${APP_KEY_BOOTSTRAP:-base64:$(head -c 32 /dev/urandom | base64)}"
-          DB_PASSWORD="${DB_PASSWORD_BOOTSTRAP:-trustflow_local_pw}"
-          OPENAI_API_KEY="${OPENAI_API_KEY_BOOTSTRAP:-sk-local-placeholder}"
-
-          if ! kubectl -n trustflow get secret trustflow-secrets >/dev/null 2>&1; then
-            kubectl -n trustflow create secret generic trustflow-secrets \
-              --from-literal=APP_KEY="${APP_KEY}" \
-              --from-literal=DB_USERNAME="trustflow" \
-              --from-literal=DB_PASSWORD="${DB_PASSWORD}" \
-              --from-literal=OPENAI_API_KEY="${OPENAI_API_KEY}"
-          fi
-
-          if ! kubectl -n trustflow get secret mysql-secrets >/dev/null 2>&1; then
-            kubectl -n trustflow create secret generic mysql-secrets \
-              --from-literal=MYSQL_ROOT_PASSWORD="${DB_PASSWORD}" \
-              --from-literal=MYSQL_USER="trustflow" \
-              --from-literal=MYSQL_PASSWORD="${DB_PASSWORD}" \
-              --from-literal=MYSQL_DATABASE="trustflow_crm"
-          fi
-
-      - name: Apply manifests (kustomize)
-        shell: bash
-        run: |
-          set -euo pipefail
-          kubectl apply -k k8s/
-          kubectl -n trustflow get all
-
-      - name: Pin image to just-built tag
-        shell: bash
-        env:
-          SHA_SHORT: ${{ needs.build.outputs.sha-short }}
-        run: |
-          set -euo pipefail
-          IMAGE="sherdev/trustflow-crm:sha-${SHA_SHORT}"
-          echo "Rolling trustflow-web to ${IMAGE}"
-          kubectl -n trustflow set image deployment/trustflow-web app="${IMAGE}"
-
-      - name: Wait for rollout
-        shell: bash
-        run: |
-          set -euo pipefail
-          kubectl -n trustflow rollout status deployment/trustflow-web --timeout=300s
-          kubectl -n trustflow get pods -o wide
-
-      - name: Run migrations (Job)
-        shell: bash
-        env:
-          SHA_SHORT: ${{ needs.build.outputs.sha-short }}
-        run: |
-          set -euo pipefail
-          IMAGE="sherdev/trustflow-crm:sha-${SHA_SHORT}"
-          # Clean up any previous run and apply the Job template with the
-          # just-built image tag sed-substituted in.
-          kubectl -n trustflow delete job trustflow-migrate --ignore-not-found
-          sed "s#IMAGE_PLACEHOLDER#${IMAGE}#g" k8s/migration-job.yaml | kubectl apply -f -
-
-          # kubectl wait has its own --timeout, so the Job can never hang
-          # longer than 5 minutes. If the wait fails (timeout or failed
-          # condition) we dump full diagnostics before exiting so the root
-          # cause is always visible in the Actions UI.
-          dump_diagnostics() {
-            echo "::group::Job description"
-            kubectl -n trustflow describe job/trustflow-migrate || true
-            echo "::endgroup::"
-            echo "::group::Job pods"
-            kubectl -n trustflow get pods -l app.kubernetes.io/name=trustflow-migrate -o wide || true
-            echo "::endgroup::"
-            echo "::group::Pod describe (first matching pod)"
-            POD=$(kubectl -n trustflow get pods -l app.kubernetes.io/name=trustflow-migrate -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || true)
-            if [ -n "${POD:-}" ]; then
-              kubectl -n trustflow describe pod "$POD" || true
-              echo "--- init logs ---"
-              kubectl -n trustflow logs "$POD" -c wait-for-mysql --tail=200 || true
-              echo "--- migrate logs ---"
-              kubectl -n trustflow logs "$POD" -c migrate --tail=400 || true
-            else
-              echo "no pod found yet"
-            fi
-            echo "::endgroup::"
-            echo "::group::Recent namespace events"
-            kubectl -n trustflow get events --sort-by=.lastTimestamp --field-selector involvedObject.name=trustflow-migrate || true
-            echo "::endgroup::"
-          }
-
-          # Note: do NOT wrap this in GNU `timeout` — macOS self-hosted
-          # runners don't ship coreutils by default, and a missing
-          # `timeout` command caused an earlier run to false-fail a
-          # perfectly healthy Migration Job after 3 seconds.
-          # `kubectl wait --timeout=300s` is sufficient on its own.
-          if kubectl -n trustflow wait --for=condition=complete --timeout=300s job/trustflow-migrate; then
-            echo "Migration Job completed successfully."
-            kubectl -n trustflow logs job/trustflow-migrate --tail=100 || true
-            exit 0
-          fi
-
-          echo "::error::Migration Job did not complete — dumping diagnostics."
-          dump_diagnostics
-          exit 1
-
-      - name: Smoke test (via port-forward)
-        shell: bash
-        run: |
-          set -euo pipefail
-          # Docker Desktop's Kubernetes does NOT reliably expose NodePort
-          # services on localhost from the Mac host (it's a long-standing
-          # networking quirk — NodePort binds inside the VM but the port
-          # mapping back to the host is flaky, especially right after the
-          # Service is recreated). Our endpoints are populated and the
-          # Service is healthy in-cluster, so we smoke-test via a
-          # short-lived port-forward instead of via the NodePort.
-          #
-          # This is also more reliable for CI: it tests the Service, not
-          # just the Pod, and works on any runner regardless of how the
-          # host exposes NodePorts.
-          kubectl -n trustflow port-forward svc/trustflow-web 38080:80 \
-            >/tmp/pf.log 2>&1 &
-          PF_PID=$!
-          trap 'kill "$PF_PID" 2>/dev/null || true' EXIT
-
-          # Give port-forward a moment to establish the listener.
-          for i in $(seq 1 10); do
-            if lsof -i :38080 -sTCP:LISTEN >/dev/null 2>&1; then
-              echo "port-forward ready after ${i} check(s)"
-              break
-            fi
-            sleep 1
-          done
-
-          OK=0
-          for i in $(seq 1 20); do
-            if curl -fsS --max-time 5 http://127.0.0.1:38080/up >/dev/null; then
-              echo "App is healthy via port-forward (svc/trustflow-web:80)"
-              OK=1
-              break
-            fi
-            echo "Waiting for app… ($i/20)"
-            sleep 3
-          done
-
-          if [ "$OK" -ne 1 ]; then
-            echo "::error::App did not respond via port-forward."
-            echo "--- port-forward log ---"
-            cat /tmp/pf.log || true
-            echo "--- deployment ---"
-            kubectl -n trustflow describe deployment/trustflow-web || true
-            echo "--- web pod logs ---"
-            kubectl -n trustflow logs deployment/trustflow-web --tail=150 || true
-            exit 1
-          fi
-
-      - name: Deployment summary
+      - name: Build summary
         if: always()
-        shell: bash
         run: |
           {
-            echo "## TrustFlow CRM Deploy Summary"
+            echo "## Build & Push"
             echo ""
             echo "| Item | Value |"
             echo "| --- | --- |"
+            echo "| Image  | \`${{ steps.meta.outputs.image }}\` |"
+            echo "| Tags   | \`latest\`, \`main\`, \`sha-${{ steps.meta.outputs.sha-short }}\` |"
             echo "| Commit | \`${{ github.sha }}\` |"
-            echo "| Image  | \`sherdev/trustflow-crm:sha-${{ needs.build.outputs.sha-short }}\` |"
-            echo "| URL    | \`kubectl -n trustflow port-forward svc/trustflow-web 30080:80\` → http://localhost:30080 |"
             echo ""
-            echo "> Docker Desktop's NodePort binding is flaky on macOS, so"
-            echo "> the app is most reliably reached by running a"
-            echo "> port-forward on the deploy host. See \`scripts/pf.sh\`."
+            echo "### Pull from any host"
             echo ""
-            echo "### Pods"
-            kubectl -n trustflow get pods -o wide 2>/dev/null || true
+            echo '```bash'
+            echo "# if image is private, first:"
+            echo "#   echo \$GHCR_TOKEN | docker login ghcr.io -u sherzot --password-stdin"
+            echo "docker pull ${{ steps.meta.outputs.image }}:latest"
+            echo '```'
+            echo ""
+            echo "### Deploy to a VPS / cloud VM"
+            echo ""
+            echo '```bash'
+            echo "git clone https://github.com/sherzot/TrustFlowCRM.git && cd TrustFlowCRM"
+            echo "cp .env.production.example .env.production   # then edit it"
+            echo "bash scripts/deploy.sh"
+            echo '```'
           } >> "$GITHUB_STEP_SUMMARY"

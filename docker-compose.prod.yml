@@ -1,0 +1,129 @@
+# ============================================================================
+# TrustFlow CRM — production docker-compose
+#
+# Intended targets: any Linux VM / VPS (AWS EC2, DigitalOcean droplet,
+# Hetzner, Fly.io machine with compose support, etc). Pulls the image
+# from GitHub Container Registry instead of building it locally.
+#
+# One-time setup on the target host:
+#     git clone https://github.com/sherzot/TrustFlowCRM.git
+#     cd TrustFlowCRM
+#     cp .env.production.example .env.production
+#     # edit .env.production — fill in APP_KEY, real DB_PASSWORD, OPENAI_API_KEY, …
+#     # if image is private:
+#     #   echo "$GHCR_TOKEN" | docker login ghcr.io -u sherzot --password-stdin
+#
+# To deploy / upgrade:
+#     bash scripts/deploy.sh                 # latest image
+#     IMAGE_TAG=sha-abc1234 bash scripts/deploy.sh  # pin a specific build
+#
+# Reach the app:
+#     http://<host>:${APP_PORT:-8080}        # direct
+#     or put Caddy / nginx / Traefik in front to terminate TLS on 443
+# ============================================================================
+
+services:
+  app:
+    image: ghcr.io/sherzot/trustflowcrm:${IMAGE_TAG:-latest}
+    container_name: trustflow-app
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      # Runtime wiring — network hostnames are the compose service names.
+      APP_ENV: production
+      APP_DEBUG: "false"
+      DB_HOST: db
+      DB_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      RUN_HORIZON: "true"
+      RUN_SCHEDULER: "true"
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    volumes:
+      - app_storage:/var/www/html/storage
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    # Healthcheck uses PHP (always present in the image) rather than curl
+    # or wget so it works regardless of what utilities the base image ships.
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "php -r 'exit(@file_get_contents(\"http://127.0.0.1:8080/up\") === false ? 1 : 0);'"
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+    networks:
+      - trustflow
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  db:
+    image: mysql:8.0
+    container_name: trustflow-db
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+    # Password reference uses $$ so compose does NOT interpolate it — the
+    # shell inside the container evaluates $MYSQL_ROOT_PASSWORD from the
+    # env_file at runtime.
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - 'mysqladmin ping -h 127.0.0.1 -uroot -p"$${MYSQL_ROOT_PASSWORD}"'
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - trustflow
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    image: redis:7-alpine
+    container_name: trustflow-redis
+    restart: unless-stopped
+    command:
+      - "redis-server"
+      - "--appendonly"
+      - "yes"
+      - "--maxmemory-policy"
+      - "allkeys-lru"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - trustflow
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  trustflow:
+    driver: bridge
+
+volumes:
+  dbdata:
+  redisdata:
+  app_storage:
